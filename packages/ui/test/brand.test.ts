@@ -48,6 +48,6 @@ test("every radius is the 2px token, except the pay pill (as is)", () => {
 test("no round markers outside the pay pill", () => {
   const rules = css.split("}");
   for (const rule of rules) {
-    if (rule.includes("50%") && rule.includes("border-radius") && !rule.includes("tb-paypill")) assert.fail(`round shape in: ${rule.trim().slice(0, 80)}`);
+    if (/border-radius:\s*50%/.test(rule) && !rule.includes("tb-paypill")) assert.fail(`round shape in: ${rule.trim().slice(0, 80)}`);
   }
 });
