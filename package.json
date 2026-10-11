@@ -7,10 +7,10 @@
     "node": ">=24"
   },
   "scripts": {
-    "typecheck": "pnpm -r --if-present typecheck",
+    "typecheck": "tsc --noEmit -p packages/ui/tsconfig.json",
     "lint": "biome check .",
-    "test": "pnpm -r --if-present test",
-    "build": "pnpm -r --if-present build"
+    "build": "tsc -p packages/ui/tsconfig.build.json && cp packages/ui/src/tokens.css packages/ui/src/components.css packages/ui/dist/",
+    "test": "node --run build && node --test packages/ui/test/*.test.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",

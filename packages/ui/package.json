@@ -21,7 +21,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json && cp src/tokens.css src/components.css dist/",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "pnpm build && node --test test/*.test.ts"
+    "test": "node --run build && node --test test/*.test.ts"
   },
   "peerDependencies": {
     "react": ">=19"
