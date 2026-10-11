@@ -1,14 +1,7 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "includes": [
-      "**",
-      "!**/node_modules",
-      "!**/dist",
-      "!pnpm-lock.yaml",
-      "!tealbrick-ci.json",
-      "!.tb-ci"
-    ]
+    "includes": ["**", "!**/node_modules", "!**/dist", "!pnpm-lock.yaml", "!tealbrick-ci.json", "!.tb-ci"]
   },
   "formatter": {
     "indentStyle": "space",
