@@ -23,3 +23,11 @@ Woodpecker CI (shared opt2 pipeline template from `opt2-tealbrick-platform`).
 ## Language
 
 New code is TypeScript (Node 24+). Swift only where the macOS app requires it.
+
+## Packages
+
+| Package | Owner lane | What |
+|---|---|---|
+| `@opt2-tealbrick/ui` (`packages/ui`) | Portal GUI | Design system: tokens (teal + burgundy, uniform 2 px radius, no dots, no green/orange) + React components. `test/brand.test.ts` enforces the brand rules. |
+
+Release: tag `ui-v<version>`; the tarball is attached to the GitHub release (REPOS.md section 5).

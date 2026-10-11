@@ -1,0 +1,132 @@
+/*
+ * @opt2-tealbrick/ui tokens. Brand rules (PRD v2 §7.3):
+ *   - teal + burgundy only; never green or orange tones
+ *   - uniform 2px radius (single documented exception: the pay pill, kept "as is")
+ *   - never dots: no round status markers, no round handles, no bullet dots
+ * Base neutrals and the teal ink are harvested from v1 canvas.css (pc-shell tokens).
+ */
+:root {
+  /* teal */
+  --tb-teal-900: #0f2f2c;
+  --tb-teal-800: #173f3c; /* v1 ink */
+  --tb-teal-700: #17544f; /* v1 brand teal */
+  --tb-teal-600: #1f6b65;
+  --tb-teal-500: #2f8a83;
+  --tb-teal-300: #8fc9c2;
+  --tb-teal-100: #dceae7;
+  --tb-teal-50: #eef5f3;
+
+  /* burgundy (replaces v1 rust accent #a8442f, which reads orange) */
+  --tb-burgundy-900: #4a1026;
+  --tb-burgundy-800: #5e1630;
+  --tb-burgundy-700: #7b2440;
+  --tb-burgundy-600: #962f50;
+  --tb-burgundy-300: #d9a3b4;
+  --tb-burgundy-100: #f3e3e8;
+
+  /* neutrals (v1 paper family) */
+  --tb-paper: #f3f1e9;
+  --tb-surface: #fbfaf5;
+  --tb-white: #fffef9;
+  --tb-canvas: #eef0ec;
+  --tb-line: #d9ddd6;
+  --tb-line-strong: #b7c0bb;
+  --tb-muted: #5a6a66;
+  --tb-ink: var(--tb-teal-800);
+
+  /* roles */
+  --tb-accent: var(--tb-burgundy-700);
+  --tb-primary: var(--tb-teal-800);
+  --tb-primary-hover: var(--tb-teal-700);
+  --tb-focus: var(--tb-burgundy-600);
+  --tb-veil: color-mix(in srgb, var(--tb-paper) 62%, transparent);
+
+  /* status tones: shape is a 3px bar + text, never a dot */
+  --tb-tone-ok: var(--tb-teal-600);
+  --tb-tone-progress: var(--tb-teal-300);
+  --tb-tone-action: var(--tb-burgundy-600);
+  --tb-tone-blocked: var(--tb-burgundy-800);
+  --tb-tone-neutral: #8b9692;
+
+  /* shape */
+  --tb-radius: 2px;
+  --tb-radius-pill-as-is: 14px; /* pay pill only, v1 license-cart.css:3 kept as is */
+  --tb-border: 1px solid var(--tb-line);
+  --tb-shadow-1: 0 4px 12px #173f3c0d;
+  --tb-shadow-2: 0 12px 32px #173f3c24;
+
+  /* type */
+  --tb-font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --tb-font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --tb-font-serif: Georgia, "Times New Roman", serif;
+  --tb-text-xs: 11px;
+  --tb-text-sm: 12px;
+  --tb-text-md: 13px;
+  --tb-text-lg: 16px;
+  --tb-text-xl: 22px;
+  --tb-text-2xl: 30px;
+  --tb-tracking: -0.012em;
+
+  /* spacing (4px grid) */
+  --tb-s1: 4px;
+  --tb-s2: 8px;
+  --tb-s3: 12px;
+  --tb-s4: 16px;
+  --tb-s5: 20px;
+  --tb-s6: 24px;
+  --tb-s8: 32px;
+
+  /* motion */
+  --tb-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --tb-fast: 120ms;
+  --tb-med: 220ms;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--tb-paper);
+  color: var(--tb-ink);
+  font-family: var(--tb-font-sans);
+  font-size: var(--tb-text-md);
+  line-height: 1.5;
+  letter-spacing: var(--tb-tracking);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--tb-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
