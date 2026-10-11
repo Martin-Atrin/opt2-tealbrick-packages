@@ -369,7 +369,87 @@ export function CloseIcon() {
   );
 }
 
-/** Mark from the brand asset; size in px. */
+/**
+ * The brand mark (two bricks, rose + teal) as inline SVG, so it renders under any base path
+ * (Portal at `/`, apps at `/a/<product>/`). The PNG stays available as `@opt2-tealbrick/ui/assets/…`.
+ */
 export function BrandMark({ size = 32 }: { size?: number }) {
-  return <img src="/brand/teal-brick-mark-160.png" width={size} height={size} alt="" />;
+  return (
+    <svg aria-hidden="true" width={size} height={size} viewBox="0 0 32 32" fill="none" stroke="#173f3c" strokeWidth="1.6" strokeLinejoin="round">
+      <path d="M3 9.5 9 6l9 4.5-6 3.5z" fill="#e7b3b3" />
+      <path d="M3 9.5v7l9 4.5v-7z" fill="#c98585" />
+      <path d="M12 14v7l6-3.5v-7z" fill="#b06f72" />
+      <path d="M14 18.5 20 15l9 4.5-6 3.5z" fill="#9fdcd5" />
+      <path d="M14 18.5v7l9 4.5v-7z" fill="#5fbfb5" />
+      <path d="M23 23v7l6-3.5v-7z" fill="#3e9f96" />
+    </svg>
+  );
+}
+
+export type ShellPage = { id: string; label: string; badge?: number | string | null };
+
+/** The SDK's standard app pages (SDK-API §14). Apps add their own pages before or after these. */
+export const STANDARD_PAGES: readonly ShellPage[] = [
+  { id: "holds", label: "Holds" },
+  { id: "receipts", label: "Receipts" },
+  { id: "agents", label: "Agents & scopes" },
+  { id: "keys", label: "Keys" },
+  { id: "backups", label: "Backups & export" },
+];
+
+/**
+ * The ONE app shell for miniapps (SDK-API §14, D113: no per-app copies): brand header with the app's name and icon,
+ * a page nav (sidebar on wide screens, scrolling tabs on narrow ones), an optional banner, and the page content.
+ * Router-agnostic: the app passes `current` and handles `onNavigate`.
+ */
+export function AppShell({
+  title,
+  icon,
+  pages,
+  current,
+  onNavigate,
+  actions,
+  banner,
+  footer,
+  children,
+}: {
+  title: string;
+  icon?: ReactNode;
+  pages: readonly ShellPage[];
+  current: string;
+  onNavigate: (id: string) => void;
+  actions?: ReactNode;
+  banner?: ReactNode;
+  footer?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <div className="tb-shell">
+      <header className="tb-shell-head">
+        <div className="tb-shell-brand">
+          <BrandMark size={24} />
+          <span className="tb-shell-maker">teal brick</span>
+          <span className="tb-shell-sep" aria-hidden="true">
+            /
+          </span>
+          {icon && <span className="tb-shell-icon">{icon}</span>}
+          <h1>{title}</h1>
+        </div>
+        {actions && <div className="tb-shell-actions">{actions}</div>}
+      </header>
+      <nav className="tb-shell-nav" aria-label={`${title} pages`}>
+        {pages.map((p) => (
+          <button type="button" key={p.id} aria-current={p.id === current ? "page" : undefined} onClick={() => onNavigate(p.id)}>
+            <span>{p.label}</span>
+            {p.badge !== undefined && p.badge !== null && p.badge !== 0 && <span className="tb-shell-badge">{p.badge}</span>}
+          </button>
+        ))}
+      </nav>
+      <main className="tb-shell-main">
+        {banner}
+        {children}
+        {footer && <footer className="tb-shell-foot">{footer}</footer>}
+      </main>
+    </div>
+  );
 }
