@@ -388,6 +388,14 @@ export function BrandMark({ size = 32 }: { size?: number }) {
 
 export type ShellPage = { id: string; label: string; badge?: number | string | null };
 
+const hasBadge = (p: ShellPage) => p.badge !== undefined && p.badge !== null && p.badge !== 0 && p.badge !== "";
+
+/** Accessible name of a nav item (C61): the visible label (or the page id when a label is empty) plus its badge. */
+export function shellPageName(p: ShellPage): string {
+  const label = typeof p.label === "string" && p.label.trim() ? p.label.trim() : p.id;
+  return hasBadge(p) ? `${label}, ${p.badge}` : label;
+}
+
 /** The SDK's standard app pages (SDK-API §14). Apps add their own pages before or after these. */
 export const STANDARD_PAGES: readonly ShellPage[] = [
   { id: "holds", label: "Holds" },
@@ -439,9 +447,13 @@ export function AppShell({
       </header>
       <nav className="tb-shell-nav" aria-label={`${title} pages`}>
         {pages.map((p) => (
-          <button type="button" key={p.id} aria-current={p.id === current ? "page" : undefined} onClick={() => onNavigate(p.id)}>
+          <button type="button" key={p.id} aria-label={shellPageName(p)} aria-current={p.id === current ? "page" : undefined} onClick={() => onNavigate(p.id)}>
             <span>{p.label}</span>
-            {p.badge !== undefined && p.badge !== null && p.badge !== 0 && <span className="tb-shell-badge">{p.badge}</span>}
+            {hasBadge(p) && (
+              <span className="tb-shell-badge" aria-hidden="true">
+                {p.badge}
+              </span>
+            )}
           </button>
         ))}
       </nav>
