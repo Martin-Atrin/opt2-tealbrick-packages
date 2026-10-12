@@ -761,3 +761,83 @@ a.tb-btn {
     display: none;
   }
 }
+
+/* Brick: the brand card for canvas items (agent = teal, app = burgundy/stone).
+   Brick proportions (~2:1), a lit top edge, a darker right side and bottom edge (isometric extrusion drawn with
+   flat offsets, no blur), faint running-bond mortar texture. Uniform 2px radius; no studs, no dots. */
+.tb-brick {
+  --face: var(--tb-brick-app-face);
+  --top: var(--tb-brick-app-top);
+  --side: var(--tb-brick-app-side);
+  --bottom: var(--tb-brick-app-bottom);
+  --ink: var(--tb-brick-app-ink);
+  --muted: var(--tb-brick-app-muted);
+  position: relative;
+  isolation: isolate;
+  width: 264px;
+  min-height: 132px;
+  border: 1px solid var(--bottom);
+  border-top-color: var(--top);
+  border-radius: var(--tb-radius);
+  color: var(--ink);
+  background:
+    linear-gradient(180deg, var(--top) 0, var(--top) 3px, transparent 3px),
+    repeating-linear-gradient(180deg, transparent 0 43px, var(--tb-brick-mortar) 43px 44px), var(--face);
+  box-shadow:
+    1px 1px 0 var(--side),
+    2px 2px 0 var(--side),
+    3px 3px 0 var(--side),
+    4px 4px 0 var(--side),
+    5px 5px 0 var(--bottom),
+    var(--tb-brick-depth) var(--tb-brick-depth) 0 var(--bottom),
+    var(--tb-brick-depth) calc(var(--tb-brick-depth) + 6px) 12px #173f3c1f;
+  transition:
+    transform var(--tb-fast) var(--tb-ease),
+    box-shadow var(--tb-fast) var(--tb-ease);
+}
+.tb-brick[data-kind="agent"] {
+  --face: var(--tb-brick-agent-face);
+  --top: var(--tb-brick-agent-top);
+  --side: var(--tb-brick-agent-side);
+  --bottom: var(--tb-brick-agent-bottom);
+  --ink: var(--tb-brick-agent-ink);
+  --muted: var(--tb-brick-agent-muted);
+}
+/* running bond: the vertical joint shifts by half a brick on each course */
+.tb-brick::before {
+  content: "";
+  position: absolute;
+  z-index: -1; /* above the brick face, below the content (isolated stacking context) */
+  inset: 3px 0 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent calc(50% - 0.5px), var(--tb-brick-mortar) calc(50% - 0.5px) calc(50% + 0.5px), transparent calc(50% + 0.5px)) 0 0 / 100%
+    44px no-repeat,
+    linear-gradient(
+      90deg,
+      transparent calc(25% - 0.5px),
+      var(--tb-brick-mortar) calc(25% - 0.5px) calc(25% + 0.5px),
+      transparent calc(25% + 0.5px),
+      transparent calc(75% - 0.5px),
+      var(--tb-brick-mortar) calc(75% - 0.5px) calc(75% + 0.5px),
+      transparent calc(75% + 0.5px)
+    )
+    0 44px / 100% 44px no-repeat,
+    linear-gradient(90deg, transparent calc(50% - 0.5px), var(--tb-brick-mortar) calc(50% - 0.5px) calc(50% + 0.5px), transparent calc(50% + 0.5px)) 0 88px /
+    100% 44px no-repeat;
+  border-radius: var(--tb-radius);
+}
+.tb-brick:hover {
+  transform: translate(-1px, -1px);
+}
+.tb-brick[data-selected="true"] {
+  outline: 2px solid var(--tb-burgundy-600);
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tb-brick,
+  .tb-brick:hover {
+    transform: none;
+    transition: none;
+  }
+}

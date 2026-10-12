@@ -51,3 +51,12 @@ test("no round markers outside the pay pill", () => {
     if (/border-radius:\s*50%/.test(rule) && !rule.includes("tb-paypill")) assert.fail(`round shape in: ${rule.trim().slice(0, 80)}`);
   }
 });
+
+test("bricks: tokens for both families, flat extrusion, no studs, reduced motion respected", () => {
+  for (const t of ["agent", "app"])
+    for (const part of ["face", "top", "side", "bottom", "ink", "muted"]) assert.match(css, new RegExp(`--tb-brick-${t}-${part}:`));
+  const brick = css.slice(css.indexOf(".tb-brick {"));
+  assert.match(brick, /border-radius: var\(--tb-radius\)/);
+  assert.doesNotMatch(brick.slice(0, brick.indexOf("@media")), /radial-gradient/); // no round studs
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.tb-brick,\s*\.tb-brick:hover \{\s*transform: none;/);
+});

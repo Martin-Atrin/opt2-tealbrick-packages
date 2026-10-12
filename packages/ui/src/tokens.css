@@ -48,6 +48,22 @@
   --tb-tone-blocked: var(--tb-burgundy-800);
   --tb-tone-neutral: #8b9692;
 
+  /* bricks (canvas cards): face / top highlight / side edge / bottom edge / ink, 3-shade like the brand glyph */
+  --tb-brick-agent-face: var(--tb-teal-700);
+  --tb-brick-agent-top: #2a7770;
+  --tb-brick-agent-side: #0f3a37;
+  --tb-brick-agent-bottom: var(--tb-teal-900);
+  --tb-brick-agent-ink: var(--tb-white);
+  --tb-brick-agent-muted: #cfe3df;
+  --tb-brick-app-face: #eee5e6;
+  --tb-brick-app-top: #f9f4f4;
+  --tb-brick-app-side: #a9727f;
+  --tb-brick-app-bottom: var(--tb-burgundy-700);
+  --tb-brick-app-ink: var(--tb-teal-800);
+  --tb-brick-app-muted: #5e4850;
+  --tb-brick-depth: 6px;
+  --tb-brick-mortar: color-mix(in srgb, currentColor 7%, transparent);
+
   /* shape */
   --tb-radius: 2px;
   --tb-radius-pill-as-is: 14px; /* pay pill only, v1 license-cart.css:3 kept as is */
