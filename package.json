@@ -7,10 +7,10 @@
     "node": ">=24"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit -p packages/ui/tsconfig.json",
+    "typecheck": "pnpm --filter @opt2-tealbrick/ui run typecheck",
     "lint": "biome check .",
-    "build": "tsc -p packages/ui/tsconfig.build.json && cp packages/ui/src/tokens.css packages/ui/src/components.css packages/ui/dist/",
-    "test": "node --run build && node --test packages/ui/test/*.test.ts"
+    "build": "node packages/ui/scripts/build.ts",
+    "test": "node packages/ui/scripts/build.ts && node --test packages/ui/test/*.test.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",

@@ -1,0 +1,49 @@
+/* @deprecated 0.1.x token names that tokens.css (design source) no longer defines. They keep 0.1.x consumers rendering
+   with the new look until they move to the 0.2 names (CHANGELOG.md migration table). Removed in 0.3.0 (MIGRATION S11).
+   Appended to dist/tokens.css by the build. Values are references only, so both themes follow. */
+:root, [data-theme="dark"] {
+  --tb-teal-50: var(--tb-teal-wash);
+  --tb-teal-100: var(--tb-teal-wash-line);
+  --tb-teal-300: var(--tb-teal-wash-line);
+  --tb-teal-500: var(--tb-teal);
+  --tb-teal-600: var(--tb-teal);
+  --tb-teal-700: var(--tb-teal-ink);
+  --tb-teal-800: var(--tb-ink);
+  --tb-teal-900: var(--tb-ink);
+  --tb-burgundy-100: var(--tb-brick-wash);
+  --tb-burgundy-300: var(--tb-brick);
+  --tb-burgundy-600: var(--tb-brick);
+  --tb-burgundy-700: var(--tb-brick);
+  --tb-burgundy-800: var(--tb-brick-ink);
+  --tb-burgundy-900: var(--tb-brick-ink);
+  --tb-tone-ok: var(--tb-teal);
+  --tb-tone-progress: var(--tb-teal-ink);
+  --tb-tone-action: var(--tb-brick);
+  --tb-tone-blocked: var(--tb-brick-ink);
+  --tb-tone-neutral: var(--tb-tone-stone);
+  --tb-text-xs: var(--tb-text-hint);
+  --tb-text-sm: var(--tb-text-tag);
+  --tb-text-md: var(--tb-text-body);
+  --tb-text-lg: var(--tb-text-lede);
+  --tb-text-xl: var(--tb-text-title);
+  --tb-text-2xl: var(--tb-text-h2);
+  --tb-font-serif: var(--tb-font);
+  --tb-tracking: 0;
+  --tb-fast: var(--tb-dur-fast);
+  --tb-med: var(--tb-dur);
+  /* the 0.1.2 .tb-brick canvas card is gone (C143: .tb-node / the canvas rebuild); its tokens read as plain tiles */
+  --tb-brick-depth: 0px;
+  --tb-brick-mortar: transparent;
+  --tb-brick-agent-face: var(--tb-tile);
+  --tb-brick-agent-top: var(--tb-tile);
+  --tb-brick-agent-side: var(--tb-line);
+  --tb-brick-agent-bottom: var(--tb-line);
+  --tb-brick-agent-ink: var(--tb-ink);
+  --tb-brick-agent-muted: var(--tb-muted);
+  --tb-brick-app-face: var(--tb-tile);
+  --tb-brick-app-top: var(--tb-tile);
+  --tb-brick-app-side: var(--tb-line);
+  --tb-brick-app-bottom: var(--tb-line);
+  --tb-brick-app-ink: var(--tb-ink);
+  --tb-brick-app-muted: var(--tb-muted);
+}
