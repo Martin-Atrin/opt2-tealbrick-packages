@@ -35,7 +35,7 @@
   ],
   "scripts": {
     "build": "node scripts/build.ts",
-    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.scripts.json",
+    "typecheck": "node scripts/build.ts && tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.scripts.json",
     "test": "node scripts/build.ts && node --test test/*.test.ts",
     "check:contrast": "node scripts/check-contrast.ts",
     "check:system": "node src/bin/check-system.ts src",

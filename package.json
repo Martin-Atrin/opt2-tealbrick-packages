@@ -7,7 +7,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit -p packages/ui/tsconfig.json && tsc --noEmit -p packages/ui/tsconfig.scripts.json",
+    "typecheck": "node packages/ui/scripts/build.ts && tsc --noEmit -p packages/ui/tsconfig.json && tsc --noEmit -p packages/ui/tsconfig.scripts.json",
     "lint": "biome check .",
     "build": "node packages/ui/scripts/build.ts",
     "test": "node packages/ui/scripts/build.ts && node --test packages/ui/test/*.test.ts"
