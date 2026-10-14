@@ -5,6 +5,7 @@
 Fixes found while moving the Portal GUI onto 0.2.0. No API change.
 - Select: descenders in the value ("y", "g", "p") are no longer cut. components.css (design source) sets `overflow: clip` with a clip margin on `.tb-select-value`, then resets it to `overflow: hidden`; kit.css restores the clip. Reported to the design lead.
 - AppIcon: the fallback initial (no art) is upright, because the icon element is an `<i>`.
+- Choices: the choice cards are `<button>`s; they no longer show the browser's button border and font.
 
 ## 0.2.0 (2026-10-14)
 

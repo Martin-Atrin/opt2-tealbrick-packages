@@ -119,4 +119,5 @@ test("0.2.1: the Select value keeps descenders (overflow clip + margin wins) and
   assert.ok(last(".tb-select-trigger .tb-select-value") > comps.lastIndexOf(".tb-select-value { overflow: hidden"));
   assert.match(comps.slice(last(".tb-select-trigger .tb-select-value")), /overflow: clip;\s*overflow-clip-margin: 0\.35em;/);
   assert.match(comps.slice(comps.lastIndexOf(".tb-app-icon {")), /font-style: normal/);
+  assert.match(comps.slice(comps.lastIndexOf("button.tb-choice {")), /border: 0;[\s\S]*font: inherit;/);
 });

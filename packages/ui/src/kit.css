@@ -192,3 +192,11 @@ dialog.tb-dialog.tb-stepflow {
 .tb-app-icon {
   font-style: normal;
 }
+/* Choices renders each choice card as a <button> (role radio): no UA button chrome on the brick card */
+button.tb-choice {
+  width: 100%;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
