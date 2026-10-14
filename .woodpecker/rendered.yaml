@@ -1,0 +1,26 @@
+# Repo-specific workflow (allowed next to the standard template, ci/README "extra workflows"): the rendered checks of
+# @opt2-tealbrick/ui on its component gallery in real Chromium (C128): contrast of every text and focus outline in
+# default / hover / focus / open-Select states, scrollbar thumbs, and pixel ink-centring at DPR 1 and 2, light and dark,
+# 1280 and 375. Gate: 0 failures. The Playwright image matches the pinned playwright-core (1.63.0); no secrets; nothing
+# is published.
+labels:
+  platform: linux/amd64
+
+when:
+  - event: [pull_request, tag, manual]
+  - event: push
+    branch: main
+
+steps:
+  - name: rendered
+    image: mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+    environment:
+      CI: "true"
+      NPM_CONFIG_UPDATE_NOTIFIER: "false"
+      NPM_CONFIG_FUND: "false"
+      NPM_CONFIG_AUDIT: "false"
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+    commands:
+      - node --version
+      - corepack pnpm install --frozen-lockfile --ignore-scripts
+      - corepack pnpm --filter @opt2-tealbrick/ui run check:rendered

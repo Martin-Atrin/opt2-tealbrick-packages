@@ -1,0 +1,59 @@
+/* Gallery page layout only (not shipped). Tokens only, like every surface. */
+.page {
+  box-sizing: border-box;
+  display: grid;
+  gap: var(--tb-s8);
+  width: min(100%, 1040px);
+  margin: 0 auto;
+  padding: var(--tb-s8) var(--tb-gutter) var(--tb-s16);
+}
+.spec {
+  display: grid;
+  gap: var(--tb-s4);
+  padding-top: var(--tb-s6);
+  box-shadow: var(--tb-hair-top);
+}
+.spec > h2 {
+  font-size: var(--tb-text-title);
+  font-weight: var(--tb-weight-head);
+}
+.narrow {
+  max-width: 520px;
+}
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--tb-s4);
+}
+.app-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 12px 0 6px;
+  border-radius: var(--tb-radius-brick);
+  color: var(--tb-app-on);
+  font-weight: var(--tb-weight-label);
+  font-size: var(--tb-text-control);
+}
+.scroller {
+  max-height: 180px;
+  overflow-y: auto;
+  padding: var(--tb-s3) var(--tb-s4);
+  border-radius: var(--tb-radius-brick);
+  background: var(--tb-tile);
+  box-shadow: var(--tb-ring);
+}
+.scroll-x {
+  overflow-x: auto;
+}
+@media (max-width: 720px) {
+  .tb-head .tb-search {
+    display: none;
+  }
+}
+@media (max-width: 720px) {
+  .hide-phone {
+    display: none;
+  }
+}

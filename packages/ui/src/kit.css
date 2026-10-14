@@ -1,0 +1,182 @@
+/* @opt2-tealbrick/ui — package additions to components.css (design source, copied unchanged). Only what the React
+   components need beyond the static mockups: the native <dialog> host, the Menu anchor, the header action row, the
+   AppShell nav as links rendered by React, the AppIcon without art and an indeterminate progress bar. Tokens only; the guard (check-system) runs on this file.
+   Appended to dist/components.css by the build. */
+
+/* ------------------------------------------------------------------ Dialog / StepFlow on a native <dialog>
+   showModal() gives the platform focus trap, Esc and an inert page behind (C128: nothing behind a modal is focusable).
+   The UA styles a modal dialog (border, padding, centred margins); these reset it to the kit's brick dialog. */
+dialog.tb-dialog {
+  box-sizing: border-box;
+  padding: 0;
+  border: 0;
+  margin: var(--tb-s12) auto auto;
+  max-width: calc(100% - 2 * var(--tb-s4));
+  max-height: calc(100dvh - var(--tb-s12) - var(--tb-s4));
+  inset-block: 0;
+  overscroll-behavior: contain;
+}
+dialog.tb-dialog:not([open]) {
+  display: none;
+}
+dialog.tb-dialog::backdrop {
+  background: var(--tb-scrim);
+}
+dialog.tb-dialog.tb-stepflow {
+  height: min(var(--tb-stepflow-height), calc(100dvh - var(--tb-s12) - var(--tb-s12)));
+}
+.tb-dialog-head > .tb-stepflow-steps {
+  padding-top: var(--tb-s2);
+}
+.tb-dialog-head > h2 {
+  margin: 0;
+}
+@media (max-width: 720px) {
+  dialog.tb-dialog,
+  dialog.tb-dialog.lg {
+    width: 100%;
+    max-width: 100%;
+    margin: auto 0 0;
+    max-height: calc(100dvh - var(--tb-s16));
+  }
+  dialog.tb-dialog.tb-stepflow {
+    height: calc(100dvh - var(--tb-s16));
+  }
+}
+
+/* ------------------------------------------------------------------ Menu: anchor + popover (components.css .tb-menu) */
+.tb-menu-anchor {
+  position: relative;
+  display: inline-flex;
+}
+.tb-menu-anchor > .tb-menu {
+  top: calc(100% + 6px);
+  right: 0;
+}
+.tb-menu-anchor > .tb-menu.start {
+  right: auto;
+  left: 0;
+}
+.tb-menu hr {
+  height: var(--tb-hair);
+  margin: 6px 0;
+  border: 0;
+  background: var(--tb-line);
+}
+
+/* ------------------------------------------------------------------ header action row, toast action */
+.tb-head-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--tb-s2);
+  flex: none;
+}
+.tb-toast > .tb-ink {
+  line-height: round(nearest, 1.3em, 2px);
+}
+.tb-toast-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--tb-s2);
+  flex: none;
+}
+
+/* ------------------------------------------------------------------ AppShell nav: React renders links with class tb-tab */
+.tb-shell-nav > .tb-tab {
+  justify-content: space-between;
+  box-shadow: none;
+}
+@media (max-width: 720px) {
+  .tb-shell-nav > .tb-tab {
+    box-shadow: inset 0 0 0 var(--tb-hair) var(--tb-tab-edge);
+  }
+  .tb-shell-nav > .tb-tab[aria-current="page"] {
+    box-shadow: none;
+  }
+}
+.tb-head .tb-shell-title {
+  display: flex;
+  min-width: 0;
+  margin: 0;
+  font: inherit;
+  font-weight: var(--tb-weight-head);
+  letter-spacing: 0;
+  line-height: inherit;
+} /* the AppMark shrinks with an ellipsis instead of running under the actions */
+.tb-app-mark > span:last-child {
+  min-width: 0;
+}
+.tb-shell-banner {
+  display: grid;
+  gap: var(--tb-s3);
+}
+.tb-shell-foot {
+  padding-top: var(--tb-s6);
+  box-shadow: var(--tb-hair-top);
+  color: var(--tb-muted);
+  font-size: var(--tb-text-tag);
+}
+
+/* ------------------------------------------------------------------ AppIcon without art (until the manifest carries ui.art) */
+.tb-app-icon.is-blank {
+  display: inline-grid;
+  place-items: center;
+  background: var(--tb-plate);
+  color: var(--tb-ink);
+  box-shadow: var(--tb-ring);
+  font-weight: var(--tb-weight-head);
+  font-size: calc(var(--size) * 0.42);
+  line-height: 1;
+}
+.tb-app-icon.is-blank > .tb-ink {
+  padding-top: 0;
+}
+
+/* ------------------------------------------------------------------ progress without a value */
+.tb-progress[data-indeterminate="true"] > span {
+  width: 40%;
+  animation: tb-progress-slide 1.4s var(--tb-ease) infinite;
+}
+@keyframes tb-progress-slide {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 250% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tb-progress[data-indeterminate="true"] > span {
+    animation: none;
+    width: 100%;
+  }
+}
+
+/* ------------------------------------------------------------------ copy block: the copy button inside .tb-copy */
+.tb-copy > .tb-btn {
+  flex: none;
+  font-family: var(--tb-font); /* .tb-copy sets the mono face; the button label stays Nunito (ink centring) */
+}
+.tb-copy > code {
+  user-select: all;
+}
+
+/* ------------------------------------------------------------------ switch with its label */
+.tb-switch-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--tb-target);
+  cursor: pointer;
+  font-weight: var(--tb-weight-nav);
+  font-size: var(--tb-text-label);
+}
+.tb-switch:focus-visible {
+  outline: var(--tb-focus-width) solid var(--tb-focus);
+  outline-offset: var(--tb-focus-offset-tight);
+}
+.tb-switch:disabled {
+  background: var(--tb-disabled-fill);
+  box-shadow: none;
+  cursor: not-allowed;
+}
