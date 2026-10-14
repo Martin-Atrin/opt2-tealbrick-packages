@@ -129,3 +129,17 @@ test("0.2.2: clerk.css ships (unlayered Clerk fixes on tokens only)", { skip: di
   assert.doesNotMatch(css.replace(/\/\*[\s\S]*?\*\//g, ""), /@layer/); // unlayered, so it wins over Clerk's layer
   assert.equal((pkg.exports as Record<string, unknown>)["./clerk.css"], "./dist/clerk.css");
 });
+
+test("0.2.3: Select min-width + non-wrapping options, even tinted-panel padding, prose lists, Clerk primary flat", { skip: distSkip }, () => {
+  const comps = readFileSync(join(root, "dist/components.css"), "utf8");
+  const after = (sel: string) => comps.slice(comps.lastIndexOf(sel));
+  assert.match(after(".tb-select {"), /min-width: 160px/);
+  assert.match(after(".tb-option > .tb-ink {"), /white-space: nowrap;[\s\S]*overflow-clip-margin: 0\.35em;/);
+  assert.match(after(".tb-panel-tint {"), /padding: round\(nearest, clamp\(24px, 3vw, 40px\), 2px\)/);
+  assert.match(comps, /\.tb-prose :where\(ul\), :where\(\.tb-root\) ul\.tb-list \{ list-style: disc; \}/);
+  assert.match(comps, /:where\(\.tb-root\) :where\(ul, ol\) \{[^}]*list-style: none/); // the UI-list reset stays
+  const tokens = readFileSync(join(root, "dist/tokens.css"), "utf8");
+  assert.match(tokens, /--tb-option-selected-on: var\(--tb-ink\)/);
+  const clerk = readFileSync(join(root, "dist/clerk.css"), "utf8");
+  assert.match(clerk, /\.cl-formButtonPrimary::after \{\s*background-image: none;/);
+});

@@ -1,18 +1,18 @@
 {
   "source": "coordination/design (opt2 design lead)",
-  "synced": "2026-10-14T00:38:05.856Z",
+  "synced": "2026-10-14T08:40:25.755Z",
   "files": {
     "tokens.css": {
-      "sha256": "4def4167722c9adfaf78328e8c65927050cca0ea3bc5395a5b008bbcc8363e41",
+      "sha256": "7d1a7e48b30491b48f7c4fe7b922e1fb3f7fa21e52c6df343e064aff31a05e31",
       "to": "src/tokens.css",
       "how": "strip-aliases",
-      "pkgSha256": "787866a04cf2f0aa18d6edbbaa674146416ff90be76cf9632c5c189b874c834d"
+      "pkgSha256": "4eb09901a0309477a04649bf36e7287708b5a12ce78cc6bf776910c00211e98b"
     },
     "components.css": {
-      "sha256": "5a496a26b121b80baf31589a60eb01f686c2216863fd32c706927c06370317da",
+      "sha256": "66f0b4fc2f337016cc209999352612698a1671cdfd00a559250181f5ccc86201",
       "to": "src/components.css",
       "how": "copy",
-      "pkgSha256": "5a496a26b121b80baf31589a60eb01f686c2216863fd32c706927c06370317da"
+      "pkgSha256": "66f0b4fc2f337016cc209999352612698a1671cdfd00a559250181f5ccc86201"
     },
     "clerk-appearance.ts": {
       "sha256": "cd4c74caadcc4e0107f990a3199d4c895ea3de7ab654f76229a59f1473649eaf",
@@ -21,7 +21,7 @@
       "pkgSha256": "cd4c74caadcc4e0107f990a3199d4c895ea3de7ab654f76229a59f1473649eaf"
     },
     "tokens.ts": {
-      "sha256": "9b941537fce6ef972cfff879ce7def3e10d95d604ce66e6e8d8eb2d0b1dfc30d",
+      "sha256": "e0d7b8c3d850c169d2d8da386d62ed21d15bdff5ec193c1570898dbe7e7f1825",
       "to": "",
       "how": "derived"
     },
@@ -41,7 +41,7 @@
       "how": "derived"
     },
     "tools/screens.ts": {
-      "sha256": "7701005af86a4d78dc46afa3638819eda029add8028c46054e747c50171fca4e",
+      "sha256": "74811b950549b4be5a024494e722c179d3ce97ba57eb30b7df029dfecca35e5b",
       "to": "scripts/check-rendered.ts",
       "how": "derived"
     },

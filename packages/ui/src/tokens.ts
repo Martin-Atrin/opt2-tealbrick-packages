@@ -210,7 +210,7 @@ export const tokens = {
   optionHoverFill: "var(--tb-plate)",
   optionHoverOn: "var(--tb-ink)",
   optionSelectedFill: "var(--tb-teal-wash)",
-  optionSelectedOn: "var(--tb-teal-ink)",
+  optionSelectedOn: "var(--tb-ink)",
   optionSelectedHoverFill: "var(--tb-teal-wash-line)",
   optionSelectedHoverOn: "var(--tb-ink)",
   optionDisabledOn: "var(--tb-muted)",

@@ -1,5 +1,15 @@
 # @opt2-tealbrick/ui changelog
 
+## 0.2.3 (2026-10-14)
+
+Kit backlog (DESIGN-SYSTEM §11, C156a, C161). No API change.
+- Select: the selected option's text is ink (`--tb-option-selected-on: var(--tb-ink)`), and the check mark carries the teal-ink. Teal-ink on the selected-hover fill was only 4.4:1.
+- Select: the trigger keeps at least 160px, and option labels never wrap (one line, ellipsis, descenders kept by the clip margin). A wrapped label put the ink off-centre in Evolving Workflows 0.2.8.
+- Prose lists: `.tb-prose` restores list markers for every list inside it (disc / decimal / circle, teal-ink markers, 4px between items); `ul.tb-list` / `ol.tb-list` restore one list. The UI-list reset under `.tb-root` stays. Use them for help, consent, legal text, change lists and histories.
+- `.tb-panel-tint` padding is rounded to 2px (`round(nearest, clamp(24px, 3vw, 40px), 2px)`): 3vw gave 38.4px at 1280px and put the controls inside on half pixels.
+- clerk.css: Clerk's white gradient over the primary button (`::after`) is removed (our primary is flat); UserProfile's card keeps inside narrow columns (`.cl-cardBox { max-width: 100% }`).
+- Design source synced (components.css, tokens.css). The rendered check has a reading view (tinted panel with controls, prose lists, narrow Select) at 1280/1440/375 and a layout test with a self-test that fires on a 38.4px panel and a wrapping option.
+
 ## 0.2.2 (2026-10-14)
 
 - New export `@opt2-tealbrick/ui/clerk.css`: unlayered rules that put the brick field and button edges, the flat primary, the focus rings and the title size back on Clerk's components. `clerkAppearance` puts Clerk's CSS in `@layer clerk`, but Clerk's own rules there are more specific than the appearance elements, so its hairline shadows and lifted primary stayed (found on the live Portal sign-in, QA 2026-10-14). Import it next to `components.css` wherever Clerk renders.

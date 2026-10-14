@@ -219,7 +219,7 @@
   /* Select popover (listbox) options */
   --tb-option-fill: var(--tb-tile);               --tb-option-on: var(--tb-ink);
   --tb-option-hover-fill: var(--tb-plate);        --tb-option-hover-on: var(--tb-ink);     /* mouse over and keyboard-active */
-  --tb-option-selected-fill: var(--tb-teal-wash); --tb-option-selected-on: var(--tb-teal-ink);
+  --tb-option-selected-fill: var(--tb-teal-wash); --tb-option-selected-on: var(--tb-ink); /* ink, not teal-ink: no hover/selected mix can fall below AA (teal-ink on wash-line is only 4.4) */
   --tb-option-selected-hover-fill: var(--tb-teal-wash-line); --tb-option-selected-hover-on: var(--tb-ink);
   --tb-option-disabled-on: var(--tb-muted);
 
