@@ -136,6 +136,15 @@ function Components() {
           <Field label="Destination" hint="Where the app and its data live.">
             <Select options={DESTINATIONS} value={dest} onValueChange={setDest} />
           </Field>
+          <Field label="Status (descenders)">
+            <Select
+              options={[
+                { value: "progress", label: "In progress · gjpqy" },
+                { value: "queued", label: "Queued by jaggy typing" },
+              ]}
+              defaultValue="progress"
+            />
+          </Field>
           <Field label="Destination (disabled)">
             <Select options={DESTINATIONS} value="sandbox" disabled />
           </Field>
