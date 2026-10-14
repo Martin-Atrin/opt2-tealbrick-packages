@@ -21,18 +21,18 @@ test("BrandMark: img.tb-mark with a PNG data URI, empty alt, width 36 / height 2
   await m.unmount();
 });
 
-test("BrandMark: width prop scales the height; legacy size prop sets the width; className appended", { skip }, async () => {
+test("BrandMark: width prop scales the height; className appended", { skip }, async () => {
   const { BrandMark } = await ui();
   const m = await mount(h(BrandMark, { width: 30 }));
   let img = $(m.root, "img");
   assert.equal(img.getAttribute("width"), "30");
   assert.equal(img.getAttribute("height"), "24"); // round(30*88/108) = 24.44
-  await m.rerender(h(BrandMark, { size: 54, className: "big" }));
+  await m.rerender(h(BrandMark, { width: 54, className: "big" }));
   img = $(m.root, "img");
   assert.equal(img.getAttribute("width"), "54");
   assert.equal(img.getAttribute("height"), "44");
   assert.equal(cls(img), "tb-mark big");
-  await m.rerender(h(BrandMark, { width: 10, size: 108 })); // size wins
+  await m.rerender(h(BrandMark, { width: 108 }));
   assert.equal($(m.root, "img").getAttribute("width"), "108");
   assert.equal($(m.root, "img").getAttribute("height"), "88");
   await m.unmount();
@@ -137,7 +137,7 @@ test("AppIcon without art: is-blank with the uppercase initial in .tb-ink", { sk
   await m.unmount();
 });
 
-test("AppIcon animated: a muted looping <video> (aria-hidden) inside the icon", { skip }, async () => {
+test("AppIcon animated: a muted looping <video>, out of the tab order, inside the (decorative) icon", { skip }, async () => {
   const { AppIcon } = await ui();
   const m = await mount(h(AppIcon, { art: ART, animated: { src: "/loop.webm" } }));
   const v = $(m.root, "i video");
@@ -146,7 +146,8 @@ test("AppIcon animated: a muted looping <video> (aria-hidden) inside the icon", 
   assert.equal(v.hasAttribute("loop"), true);
   assert.equal(v.hasAttribute("autoplay"), true);
   assert.equal(v.hasAttribute("playsinline"), true);
-  assert.equal(v.getAttribute("aria-hidden"), "true");
+  assert.equal(v.getAttribute("tabindex"), "-1");
+  assert.equal($(m.root, "i.tb-app-icon").getAttribute("aria-hidden"), "true");
   await m.rerender(h(AppIcon, { art: ART }));
   assert.equal($$(m.root, "video").length, 0);
   await m.unmount();

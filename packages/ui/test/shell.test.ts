@@ -14,7 +14,9 @@ const PAGES = [
 
 const shell = async (props: Record<string, unknown> = {}) => {
   const { AppShell } = await ui();
-  return mount(h(AppShell, { title: "Knowledge", pages: PAGES, current: "holds", onNavigate: () => {}, ...props }, h("p", { id: "body" }, "page body")));
+  return mount(
+    h(AppShell, { title: "Knowledge", pages: PAGES, current: "holds", onNavigate: () => {}, ...props, children: h("p", { id: "body" }, "page body") }),
+  );
 };
 
 /** Dispatch a cancelable left click (optionally with modifiers) and report whether it was default-prevented. */
@@ -77,7 +79,7 @@ test("aria-current=page only on the current page", { skip }, async () => {
     $$(m.root, "nav a").map((a) => a.getAttribute("aria-current")),
     [null, "page", null, null],
   );
-  await m.rerender(h((await ui()).AppShell, { title: "Knowledge", pages: PAGES, current: "library", onNavigate: () => {} }, "x"));
+  await m.rerender(h((await ui()).AppShell, { title: "Knowledge", pages: PAGES, current: "library", onNavigate: () => {}, children: "x" }));
   assert.deepEqual(
     $$(m.root, "nav a").map((a) => a.getAttribute("aria-current")),
     ["page", null, null, null],
@@ -117,7 +119,7 @@ test("click: a plain click calls onNavigate(id) and is default-prevented; modifi
   await m.unmount();
 });
 
-test("with colour: root is .tb-shell.is-app with --app; mark chip links to portalHref", { skip }, async () => {
+test("with colour: root is .tb-shell.is-app with --app; mark tile links to portalHref", { skip }, async () => {
   const m = await shell({ colour: "var(--tb-app-knowledge)", portalHref: "/portal" });
   const root = $(m.root, ".tb-shell");
   assert.equal(cls(root), "tb-shell is-app");
@@ -125,8 +127,8 @@ test("with colour: root is .tb-shell.is-app with --app; mark chip links to porta
   const brand = $(m.root, "header a.tb-brand");
   assert.equal(brand.getAttribute("href"), "/portal");
   assert.equal(brand.getAttribute("aria-label"), "Tealbrick Portal");
-  const chip = $(brand, ".tb-mark-chip");
-  const img = $(chip, "img.tb-mark");
+  const tile = $(brand, ".tb-mark-tile");
+  const img = $(tile, "img.tb-mark");
   assert.match(img.getAttribute("src") ?? "", /^data:image\/png;base64,/);
   assert.equal(img.getAttribute("alt"), "");
   assert.equal($$(m.root, ".tb-wordmark").length, 0);
@@ -134,7 +136,7 @@ test("with colour: root is .tb-shell.is-app with --app; mark chip links to porta
   await m.unmount();
 });
 
-test("without colour: neutral header with the lockup (a.tb-brand + wordmark Tealbrick), no chip", { skip }, async () => {
+test("without colour: neutral header with the lockup (a.tb-brand + wordmark Tealbrick), no tile", { skip }, async () => {
   const m = await shell();
   const root = $(m.root, ".tb-shell");
   assert.equal(cls(root), "tb-shell");
@@ -143,14 +145,14 @@ test("without colour: neutral header with the lockup (a.tb-brand + wordmark Teal
   assert.equal(brand.getAttribute("href"), "/");
   assert.equal(brand.getAttribute("aria-label"), "Tealbrick Portal");
   assert.equal($(brand, ".tb-wordmark").textContent, "Tealbrick");
-  assert.equal($$(m.root, ".tb-mark-chip").length, 0);
+  assert.equal($$(m.root, ".tb-mark-tile").length, 0);
   assert.equal($$(m.root, ".tb-divider").length, 0);
-  await m.rerender(h((await ui()).AppShell, { title: "K", pages: PAGES, current: "holds", onNavigate: () => {}, portalHref: "/home" }, "x"));
+  await m.rerender(h((await ui()).AppShell, { title: "K", pages: PAGES, current: "holds", onNavigate: () => {}, portalHref: "/home", children: "x" }));
   assert.equal($(m.root, "header a.tb-brand").getAttribute("href"), "/home");
   await m.unmount();
 });
 
-test("art: the AppMark icon shows the app's still; icon prop (deprecated) replaces it", { skip }, async () => {
+test("art: the AppMark icon shows the app's still; without art it is the blank initial", { skip }, async () => {
   const { appArt } = await ui();
   const { still, colour } = appArt("knowledge", "/kit/apps") ?? { still: "" };
   const art = { still, colour }; // 1x only: happy-dom drops image-set()
@@ -160,9 +162,8 @@ test("art: the AppMark icon shows the app's still; icon prop (deprecated) replac
   assert.equal(cls(icon)?.includes("is-blank"), false);
   assert.match(icon.getAttribute("style") ?? "", /knowledge@1x\.webp/);
   await m.unmount();
-  const m2 = await shell({ icon: h("b", { id: "custom" }, "*") });
-  assert.equal($(m2.root, "h1 .tb-app-mark #custom").textContent, "*");
-  assert.equal($$(m2.root, "h1 .tb-app-icon").length, 0);
+  const m2 = await shell();
+  assert.equal(cls($(m2.root, "h1 i.tb-app-icon")), "tb-app-icon s32 is-blank");
   assert.equal($(m2.root, "h1 .tb-app-mark").lastElementChild?.textContent, "Knowledge");
   await m2.unmount();
 });

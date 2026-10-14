@@ -14,7 +14,19 @@ export function Panel({ as: Tag = "div", className, ...rest }: HTMLAttributes<HT
 }
 
 /** Settings section: ruled by a hairline on top (`first` = the ink rule that starts a sequence); `danger` = brick-ink head. */
-export function Section({ title, first, danger, className, children }: { title: ReactNode; first?: boolean; danger?: boolean; className?: string; children: ReactNode }) {
+export function Section({
+  title,
+  first,
+  danger,
+  className,
+  children,
+}: {
+  title: ReactNode;
+  first?: boolean;
+  danger?: boolean;
+  className?: string;
+  children: ReactNode;
+}) {
   return (
     <section className={cx("tb-section", first && "first", danger && "danger", className)}>
       <h2>{title}</h2>
@@ -24,25 +36,41 @@ export function Section({ title, first, danger, className, children }: { title: 
 }
 
 /** Kicker: the one swatch label that opens a page, dialog or card. Its swatch tone follows the group. */
-export function Kicker({ children, group, person, open, className }: { children: ReactNode; group?: Group; person?: boolean; open?: boolean; className?: string }) {
+export function Kicker({
+  children,
+  group,
+  person,
+  open,
+  className,
+}: {
+  children: ReactNode;
+  group?: Group;
+  person?: boolean;
+  open?: boolean;
+  className?: string;
+}) {
   return <p className={cx("tb-kicker", group && `tone-${group}`, person && "is-person", open && "is-open", className)}>{children}</p>;
 }
-
-/** @deprecated 0.1.x name of Kicker (removed in 0.3.0). */
-export const Eyebrow = ({ children }: { children: ReactNode }) => <Kicker>{children}</Kicker>;
 
 /** Iso swatch (the 2px brick motif): marks the material/group, or "not made yet" when `open`. */
 export function Swatch({ group, open, className }: { group?: Group; open?: boolean; className?: string }) {
   return <span className={cx("tb-swatch", group && `tone-${group}`, open && "is-open", className)} aria-hidden="true" />;
 }
 
-/**
- * Notice: neutral (tile + ring), `live` (teal wash) or `needs-you` (brick wash). No side bar.
- * @deprecated 0.1.x tones: ok → live, action → needs-you.
- */
-export type NoticeTone = "neutral" | "live" | "needs-you" | "ok" | "action";
-export function Notice({ tone = "neutral", role = "status", className, children }: { tone?: NoticeTone; role?: "status" | "alert"; className?: string; children: ReactNode }) {
-  const t = tone === "ok" ? "live" : tone === "action" ? "needs-you" : tone;
+/** Notice: neutral (tile + ring), `live` (teal wash) or `needs-you` (brick wash). No side bar. */
+export type NoticeTone = "neutral" | "live" | "needs-you";
+export function Notice({
+  tone = "neutral",
+  role = "status",
+  className,
+  children,
+}: {
+  tone?: NoticeTone;
+  role?: "status" | "alert";
+  className?: string;
+  children: ReactNode;
+}) {
+  const t = tone;
   return (
     <div className={cx("tb-notice", t !== "neutral" && t, className)} role={role}>
       <span>{children}</span>
@@ -113,7 +141,17 @@ export function CopyBlock({ text, label = "command" }: { text: string; label?: s
 
 export type ChoiceOption<T extends string> = { value: T; title: string; body?: string; disabled?: boolean; note?: string };
 /** Radio group drawn as brick choice cards. Arrow keys move between enabled options (roving tabindex). */
-export function Choices<T extends string>({ label, options, value, onChange }: { label: string; options: ChoiceOption<T>[]; value: T | null; onChange: (v: T) => void }) {
+export function Choices<T extends string>({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: ChoiceOption<T>[];
+  value: T | null;
+  onChange: (v: T) => void;
+}) {
   const enabled = options.filter((o) => !o.disabled);
   const refs = useRef(new Map<T, HTMLButtonElement>());
   function move(from: T, step: number) {
@@ -157,48 +195,5 @@ export function Choices<T extends string>({ label, options, value, onChange }: {
         </button>
       ))}
     </div>
-  );
-}
-
-/** @deprecated 0.1.x: real controls dimmed under a veil with one panel (removed in 0.3.0). */
-export function SetupOverlay({ active, panel, children }: { active: boolean; panel: ReactNode; children: ReactNode }) {
-  if (!active) return <>{children}</>;
-  return (
-    <div className="tb-overlay">
-      <div className="tb-overlay-content" inert aria-hidden="true">
-        {children}
-      </div>
-      <div className="tb-overlay-veil">{panel}</div>
-    </div>
-  );
-}
-
-export type SetupStep = { title: string; detail?: string; command?: string };
-/** @deprecated 0.1.x numbered setup list; use StepFlow for multi-step popups (C126). Removed in 0.3.0. */
-export function SetupSteps({ steps }: { steps: SetupStep[] }) {
-  return (
-    <ol className="tb-setup-steps">
-      {steps.map((s) => (
-        <li key={s.title}>
-          <strong>{s.title}</strong>
-          {s.detail && <p>{s.detail}</p>}
-          {s.command && <CopyBlock text={s.command} label={s.title.toLowerCase()} />}
-        </li>
-      ))}
-    </ol>
-  );
-}
-
-export type StepState = "done" | "current" | "todo";
-/** @deprecated 0.1.x step row; StepFlow draws the "n-Name" row itself (C126). Removed in 0.3.0. */
-export function Steps({ steps, current }: { steps: string[]; current: number }) {
-  return (
-    <ol className="tb-stepflow-steps" aria-label="Progress">
-      {steps.map((s, i) => (
-        <li key={s} className={i < current ? "done" : undefined} aria-current={i === current ? "step" : undefined}>
-          {i + 1}-{s}
-        </li>
-      ))}
-    </ol>
   );
 }

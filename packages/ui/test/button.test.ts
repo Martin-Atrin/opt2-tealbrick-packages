@@ -1,4 +1,4 @@
-/** Button family: variant/size classes, legacy variant names, C128 ink wrapping, arrow, IconButton, CloseButton, Avatar, ButtonLink. */
+/** Button family: variant/size classes, C128 ink wrapping, arrow, IconButton, CloseButton, Avatar, ButtonLink. */
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { $, $$, click, h, mount, skip, ui } from "./dom.ts";
@@ -27,23 +27,6 @@ test("danger + confirm adds the filled confirm step; confirm is ignored on other
   assert.equal(cls($(m.root, "button")), "tb-btn danger confirm");
   await m.rerender(h(Button, { variant: "primary", confirm: true }, "Go"));
   assert.equal(cls($(m.root, "button")), "tb-btn primary");
-  await m.unmount();
-});
-
-test("legacy 0.1.x variants: accent → primary, ghost → quiet, destructive → danger", { skip }, async () => {
-  const { Button } = await ui();
-  const cases: [string, string][] = [
-    ["accent", "tb-btn primary"],
-    ["ghost", "tb-btn quiet"],
-    ["destructive", "tb-btn danger"],
-  ];
-  for (const [variant, expected] of cases) {
-    const m = await mount(h(Button, { variant: variant as never }, "Go"));
-    assert.equal(cls($(m.root, "button")), expected, `legacy ${variant}`);
-    await m.unmount();
-  }
-  const m = await mount(h(Button, { variant: "destructive", confirm: true }, "Go"));
-  assert.equal(cls($(m.root, "button")), "tb-btn danger confirm");
   await m.unmount();
 });
 
@@ -152,8 +135,9 @@ test("ButtonLink renders an <a class=tb-btn ...> with variants, href and arrow",
   assert.equal(a.getAttribute("href"), "/next");
   assert.equal($(a, ".tb-ink").textContent, "Next");
   assert.ok($(a, "svg.tb-arrow"));
-  await m.rerender(h(ButtonLink, { href: "/x", variant: "ghost" }, "Back"));
+  await m.rerender(h(ButtonLink, { href: "/x", variant: "quiet", children: "Back" }));
   assert.equal(cls($(m.root, "a")), "tb-btn quiet");
+  assert.equal($(m.root, ".tb-ink").textContent, "Back");
   await m.unmount();
 });
 
@@ -171,7 +155,7 @@ test("buttonClass() builds the class string without rendering", { skip }, async 
   const { buttonClass } = await ui();
   assert.equal(buttonClass({}), "tb-btn");
   assert.equal(buttonClass({ variant: "primary" }), "tb-btn primary");
-  assert.equal(buttonClass({ variant: "accent", size: "lg" }), "tb-btn primary lg");
+  assert.equal(buttonClass({ variant: "secondary", size: "lg" }), "tb-btn lg");
   assert.equal(buttonClass({ variant: "danger", confirm: true, block: true, className: "z" }), "tb-btn danger confirm block z");
   assert.equal(buttonClass({ variant: "quiet", confirm: true }), "tb-btn quiet");
 });

@@ -1,5 +1,5 @@
 import type { AnchorHTMLAttributes, CSSProperties, ReactNode } from "react";
-import { type AppArt, APPS } from "../apps.ts";
+import { APPS, type AppArt } from "../apps.ts";
 import { BRAND_MARK_HEIGHT, BRAND_MARK_SRC, BRAND_MARK_WIDTH } from "../brand-mark.ts";
 import { cx, Ink } from "./ink.tsx";
 
@@ -7,8 +7,8 @@ import { cx, Ink } from "./ink.tsx";
  * The drawn two-brick mark (production PNG, 108×88; no vector exists). Rendered from a data: URI, so it works under any
  * base path. `width` is the shown width in px (36 in the lockup, 30 at <=374px).
  */
-export function BrandMark({ width = 36, size, className }: { width?: number; /** @deprecated 0.1.x prop (was the SVG box) */ size?: number; className?: string }) {
-  const w = size ?? width;
+export function BrandMark({ width = 36, className }: { width?: number; className?: string }) {
+  const w = width;
   return <img className={cx("tb-mark", className)} src={BRAND_MARK_SRC} width={w} height={Math.round((w * BRAND_MARK_HEIGHT) / BRAND_MARK_WIDTH)} alt="" />;
 }
 
@@ -61,7 +61,7 @@ export function AppIcon({
   const image = art.still2x ? `image-set(url("${art.still}") 1x, url("${art.still2x}") 2x)` : `url("${art.still}")`;
   return (
     <i className={cls} style={{ backgroundImage: image } as CSSProperties} {...a11y}>
-      {animated && <video src={animated.src} muted autoPlay loop playsInline aria-hidden="true" />}
+      {animated && <video src={animated.src} muted autoPlay loop playsInline tabIndex={-1} />}
     </i>
   );
 }

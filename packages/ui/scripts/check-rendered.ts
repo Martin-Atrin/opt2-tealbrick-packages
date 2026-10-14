@@ -203,7 +203,8 @@ for (const [file, steps, widths] of inkOnly ? [] : pages) for (const width of wi
     for (let i = 0; i < tc; i++) {
       const tr = triggers.nth(i);
       if (!(await tr.isVisible())) continue;
-      await page.keyboard.press('Escape');
+      // Esc only while a listbox is open: on a native modal <dialog> a bare Esc closes the dialog itself (StepFlow)
+      if (await page.locator('.tb-listbox:not([hidden])').count()) await page.keyboard.press('Escape');
       await tr.focus(); await page.keyboard.press('ArrowDown'); await page.keyboard.press('ArrowDown'); await settle();
       record(`select-open${tag}`, await page.evaluate(audit, '.tb-listbox:not([hidden])'));
       const opts = page.locator('.tb-listbox:not([hidden]) .tb-option');
@@ -264,7 +265,9 @@ for (const [file, , widths] of pages) for (const width of widths ?? [1280, 375])
     const top = (bt - cy) * dpr, bottom = (bb - cy) * dpr, fg = rgb(t.fg), ring = 3;
     const y0 = Math.ceil(top) + ring * dpr, y1 = Math.min(img.height - 1, Math.floor(bottom) - ring * dpr);
     const x0 = Math.max(0, Math.round((t.cols[0] - cx) * dpr)), x1 = Math.min(img.width - 1, Math.round((t.cols[1] - cx) * dpr));
-    const fill = img.px(Math.max(0, Math.round((t.cols[0] - cx - 3) * dpr)), Math.round((top + bottom) / 2)); // interior, left of the first glyph
+    // interior fill: 5px inside the box's left edge at mid-height (past any 1.5px ring; never between two glyphs —
+    // the design version sampled 3px left of the measured capital, which lands on the previous glyph in "AR")
+    const fill = img.px(Math.max(0, Math.round((bl - cx + 5) * dpr)), Math.round((top + bottom) / 2));
     const need = Math.max(...fg.map((c, i) => Math.abs(c - fill[i]))) * .5;
     if (need < 20) continue; // label colour too close to fill to measure
     const cov = (y: number) => { let m = 0; for (let x = x0; x <= x1; x++) { const p = img.px(x, y); m = Math.max(m, ...p.map((c, i) => Math.abs(c - fill[i]))); } return m; };

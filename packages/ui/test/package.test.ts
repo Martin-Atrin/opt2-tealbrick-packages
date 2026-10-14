@@ -7,7 +7,12 @@ import { test } from "node:test";
 import { $, h, mount, skip, ui } from "./dom.ts";
 
 const root = join(import.meta.dirname, "..");
-const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8")) as { version: string; exports: Record<string, unknown>; bin: Record<string, string>; files: string[] };
+const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8")) as {
+  version: string;
+  exports: Record<string, unknown>;
+  bin: Record<string, string>;
+  files: string[];
+};
 const distSkip = !existsSync(join(root, "dist/index.js")) && "build first";
 
 const targets = (e: unknown): string[] => (typeof e === "string" ? [e] : e && typeof e === "object" ? Object.values(e).flatMap(targets) : []);
@@ -29,20 +34,27 @@ test("Nunito is self-hosted: two woff2 files + OFL.txt with the upstream copyrig
   const ofl = readFileSync(join(root, "dist/fonts/OFL.txt"), "utf8");
   assert.match(ofl, /Copyright 2014 The Nunito Project Authors/);
   assert.match(ofl, /SIL OPEN FONT LICENSE Version 1\.1/);
-  for (const f of fonts.filter((x) => x.endsWith(".woff2"))) assert.equal(readFileSync(join(root, "dist/fonts", f)).subarray(0, 4).toString("latin1"), "wOF2");
+  for (const f of fonts.filter((x) => x.endsWith(".woff2")))
+    assert.equal(
+      readFileSync(join(root, "dist/fonts", f))
+        .subarray(0, 4)
+        .toString("latin1"),
+      "wOF2",
+    );
   const tokensCss = readFileSync(join(root, "dist/tokens.css"), "utf8");
   assert.equal((tokensCss.match(/@font-face/g) ?? []).length, 2);
   assert.match(tokensCss, /font-family: "Nunito"/);
   assert.match(tokensCss, /url\("\.\/fonts\/nunito-latin-wght-normal\.woff2"\)/);
   const walk = (d: string): string[] => readdirSync(d).flatMap((n) => (statSync(join(d, n)).isDirectory() ? walk(join(d, n)) : [join(d, n)]));
-  for (const f of walk(join(root, "dist")).filter((f) => /\.(css|js)$/.test(f))) assert.doesNotMatch(readFileSync(f, "utf8"), /fonts\.googleapis|fonts\.gstatic/, f);
+  for (const f of walk(join(root, "dist")).filter((f) => /\.(css|js)$/.test(f)))
+    assert.doesNotMatch(readFileSync(f, "utf8"), /fonts\.googleapis|fonts\.gstatic/, f);
 });
 
 test("dist CSS = design source + package additions, in order", { skip: distSkip }, () => {
   const tokensCss = readFileSync(join(root, "dist/tokens.css"), "utf8");
   const comps = readFileSync(join(root, "dist/components.css"), "utf8");
   assert.ok(tokensCss.indexOf("@font-face") < tokensCss.indexOf("--tb-paper:"));
-  assert.ok(tokensCss.indexOf("--tb-paper:") < tokensCss.indexOf("--tb-burgundy-700:"));
+  assert.doesNotMatch(tokensCss, /--tb-burgundy|--tb-surface:/); // C133: no 0.1.x aliases
   assert.ok(comps.includes(readFileSync(join(root, "src/components.css"), "utf8")));
   assert.ok(comps.indexOf(".tb-btn {") < comps.indexOf("dialog.tb-dialog {"));
   assert.match(tokensCss, new RegExp(`@opt2-tealbrick/ui ${pkg.version.replace(/\./g, "\\.")}`));
@@ -96,6 +108,7 @@ test("clerk-appearance: Core-3 names, literal colours from the tokens, 6px, Nuni
     assert.match(String(a.variables.colorPrimary), /^#[0-9a-f]{6}$/);
     assert.match(String(a.variables.fontFamily), /Nunito/);
     assert.equal(a.options.logoPlacement, "none");
-    for (const m of JSON.stringify(a.elements).matchAll(/var\((--tb-[a-z0-9-]+)\)/g)) assert.match(tokensCss, new RegExp(`${m[1]}\\s*:`), `${m[1]} in clerk elements`);
+    for (const m of JSON.stringify(a.elements).matchAll(/var\((--tb-[a-z0-9-]+)\)/g))
+      assert.match(tokensCss, new RegExp(`${m[1]}\\s*:`), `${m[1]} in clerk elements`);
   }
 });

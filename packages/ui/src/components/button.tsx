@@ -4,19 +4,16 @@ import { ArrowIcon, cx, inked } from "./ink.tsx";
 /**
  * Button variants (C125/C126: every button is a 6px brick). `primary` = the one main action per view (ink fill,
  * deep-teal hover); `secondary` = ink ring (default); `quiet` = line ring, muted; `danger` = destructive (brick-red ring;
- * pass `confirm` for the second, filled step). @deprecated 0.1.x names: `accent` → primary, `ghost` → quiet.
+ * pass `confirm` for the second, filled step).
  */
-export type ButtonVariant = "primary" | "secondary" | "quiet" | "danger" | "destructive" | "accent" | "ghost";
+export type ButtonVariant = "primary" | "secondary" | "quiet" | "danger";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
   primary: "primary",
-  accent: "primary",
   secondary: "",
   quiet: "quiet",
-  ghost: "quiet",
   danger: "danger",
-  destructive: "danger",
 };
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -91,11 +88,16 @@ export function CloseButton({ label = "Close", className, type = "button", ...re
 }
 
 /** Square ink avatar (44px brick) with initials, e.g. the account button. */
-export function Avatar({ initials, label, className, type = "button", ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { initials: string; label: string }) {
+export function Avatar({
+  initials,
+  label,
+  className,
+  type = "button",
+  ...rest
+}: ButtonHTMLAttributes<HTMLButtonElement> & { initials: string; label: string }) {
   return (
     <button type={type} className={cx("tb-avatar", className)} aria-label={label} {...rest}>
       {inked(initials)}
     </button>
   );
 }
-

@@ -56,7 +56,17 @@ export function CloseIcon() {
 
 export function CartIcon() {
   return (
-    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      aria-hidden="true"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M3 4h2l2.4 11h11.2l2-8H6" />
       <path d="M8.2 19.2h1.6v1.6H8.2zM17.2 19.2h1.6v1.6h-1.6z" />
     </svg>

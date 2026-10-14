@@ -116,18 +116,13 @@ test("mouse: click opens, a click on an option chooses, a disabled option does n
   await m.unmount();
 });
 
-test("0.1.x onChange(e) still works; name adds a hidden input; disabled trigger does not open", { skip }, async () => {
+test("name adds a hidden input with the value; a disabled trigger does not open", { skip }, async () => {
   const { Select } = await ui();
-  const seen: string[] = [];
-  const m = await mount(
-    h(Select, { options: OPTIONS, value: "new", name: "dest", onChange: (e: { target: { value: string } }) => seen.push(e.target.value), "aria-label": "Destination" }),
-  );
+  const m = await mount(h(Select, { options: OPTIONS, value: "new", name: "dest", "aria-label": "Destination" }));
   const t = $(m.root, ".tb-select-trigger");
-  await key(t, "ArrowDown");
-  await key(t, "ArrowDown");
-  await key(t, "Enter");
-  assert.deepEqual(seen, ["sandbox"]);
-  assert.equal(($(m.root, 'input[type="hidden"]') as HTMLInputElement).name, "dest");
+  const hidden = $(m.root, 'input[type="hidden"]') as HTMLInputElement;
+  assert.equal(hidden.name, "dest");
+  assert.equal(hidden.value, "new");
   await m.rerender(h(Select, { options: OPTIONS, value: "new", disabled: true, "aria-label": "Destination" }));
   assert.equal((t as HTMLButtonElement).disabled, true);
   await key(t, "ArrowDown");

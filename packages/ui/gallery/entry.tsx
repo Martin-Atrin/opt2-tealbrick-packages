@@ -17,11 +17,13 @@ import {
   Chip,
   ChipGroup,
   Choices,
+  CloseIcon,
   CopyBlock,
   Count,
   Dialog,
   EmptyState,
   Field,
+  IconButton,
   Kicker,
   Lockup,
   Menu,
@@ -30,10 +32,11 @@ import {
   Panel,
   PayPill,
   Progress,
-  STANDARD_PAGES,
+  SearchIcon,
   Section,
   Segmented,
   Select,
+  STANDARD_PAGES,
   StatusPill,
   StepFlow,
   Switch,
@@ -44,9 +47,6 @@ import {
   TextInput,
   TextLink,
   Toast,
-  IconButton,
-  CloseIcon,
-  SearchIcon,
 } from "../dist/index.js";
 
 const q = new URLSearchParams(location.search);
@@ -177,7 +177,6 @@ function Components() {
           <Tag status="idle">Not deployed</Tag>
           <Tag>Default</Tag>
           <Tag status="open">Set up</Tag>
-          <Tag tone="ok">Legacy ok</Tag>
           <Count>2 waiting</Count>
           <Count tone="ink">1</Count>
           <StatusPill>Recording · 12:04</StatusPill>
@@ -325,12 +324,11 @@ function Components() {
             <button type="button">Sign out</button>
           </Menu>
         </div>
-        <div className="scroller" tabIndex={0} role="region" aria-label="Scroll area">
+        <section className="scroller" tabIndex={0} aria-label="Scroll area">
           {Array.from({ length: 24 }, (_, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: static specimen rows
             <p key={i}>Receipt {i + 1}: the agent read 3 notes from “Referrals”.</p>
           ))}
-        </div>
+        </section>
       </Spec>
     </main>
   );
@@ -384,7 +382,6 @@ function StepFlowView() {
               <>
                 <p className="tb-soft">Deploying alone doesn’t give an agent access. Connect agents on the canvas.</p>
                 {Array.from({ length: 14 }, (_, i) => (
-                  // biome-ignore lint/suspicious/noArrayIndexKey: static specimen rows
                   <p key={i}>Line {i + 1}: one service, one volume, healthcheck on.</p>
                 ))}
               </>
@@ -450,7 +447,7 @@ function ShellView({ coloured }: { coloured: boolean }) {
       onNavigate={setPage}
       actions={
         <>
-          <ButtonLink href="#x" variant="quiet" size="sm">
+          <ButtonLink href="#x" variant="quiet" size="sm" className="hide-phone">
             Open Portal
           </ButtonLink>
           <Button size="sm">Sign out</Button>

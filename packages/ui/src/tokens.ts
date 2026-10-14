@@ -232,44 +232,6 @@ export const tokens = {
   ringSelected: "0 0 0 2px var(--tb-ink)",
   shadowFloat: "0 0 0 var(--tb-hair) var(--tb-line), 0 24px 48px -28px var(--tb-shadow-ink)",
   shadowFilm: "0 1px 0 rgb(23 23 23 / .06), 0 30px 60px -40px rgb(23 23 23 / .35)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  surface: "var(--tb-tile)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  white: "var(--tb-tile)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  canvas: "var(--tb-film)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  accent: "var(--tb-brick)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  veil: "var(--tb-scrim)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  fontSans: "var(--tb-font)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  primary: "var(--tb-primary-fill)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  primaryHover: "var(--tb-primary-hover-fill)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  onPrimary: "var(--tb-primary-on)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  radius: "var(--tb-radius-brick)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  radiusFocus: "var(--tb-radius-brick)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  radiusPillAsIs: "var(--tb-radius-pill)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  shadow1: "none",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  shadow2: "var(--tb-shadow-float)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  ok: "var(--tb-teal)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  progress: "var(--tb-teal-ink)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  action: "var(--tb-brick)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  blocked: "var(--tb-brick-ink)",
-  /** @deprecated 0.1.x alias (removed in 0.3.0) */
-  neutral: "var(--tb-tone-stone)",
 } as const;
 
 export type TokenName = keyof typeof tokens;
@@ -531,25 +493,6 @@ export const cssName: Record<TokenName, string> = {
   ringSelected: "ring-selected",
   shadowFloat: "shadow-float",
   shadowFilm: "shadow-film",
-  surface: "surface",
-  white: "white",
-  canvas: "canvas",
-  accent: "accent",
-  veil: "veil",
-  fontSans: "font-sans",
-  primary: "primary",
-  primaryHover: "primary-hover",
-  onPrimary: "on-primary",
-  radius: "radius",
-  radiusFocus: "radius-focus",
-  radiusPillAsIs: "radius-pill-as-is",
-  shadow1: "shadow-1",
-  shadow2: "shadow-2",
-  ok: "ok",
-  progress: "progress",
-  action: "action",
-  blocked: "blocked",
-  neutral: "neutral",
 };
 
 /** `var(--tb-<name>)` for a token, for style props and CSS-in-JS (follows the live theme). */

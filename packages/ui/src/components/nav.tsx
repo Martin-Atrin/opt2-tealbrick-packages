@@ -1,4 +1,4 @@
-import { Children, isValidElement, type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from "react";
+import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { buttonClass } from "./button.tsx";
 import { CartIcon, cx, Ink, inked } from "./ink.tsx";
 import { Count } from "./pills.tsx";
@@ -67,7 +67,7 @@ export function Tabs<T extends string>({
 /**
  * Menu: a trigger button and a brick popover of actions (float shadow). Esc closes and returns focus to the trigger;
  * Up/Down move between items; an outside pointer closes. Children are the items (<button> or <a>); a click on any of
- * them closes the menu. `align="start"` opens to the right of the trigger's left edge. (0.1.x <li> items still work.)
+ * them closes the menu. `align="start"` opens to the right of the trigger's left edge. An <hr> separates groups.
  */
 export function Menu({
   label,
@@ -80,7 +80,7 @@ export function Menu({
   label: string;
   trigger: ReactNode;
   children: ReactNode;
-  variant?: "primary" | "secondary" | "quiet" | "ghost";
+  variant?: "primary" | "secondary" | "quiet";
   size?: "sm" | "md";
   align?: "start" | "end";
 }) {
@@ -88,10 +88,7 @@ export function Menu({
   const ref = useRef<HTMLSpanElement>(null);
   const btn = useRef<HTMLButtonElement>(null);
   const id = useId();
-  const items = () => [...(ref.current?.querySelectorAll<HTMLElement>(".tb-menu > a, .tb-menu > button, .tb-menu > li > a, .tb-menu > li > button") ?? [])];
-  // 0.1.x callers pass <li> items: keep them valid inside a list
-  const legacyList = Children.toArray(children).some((c) => isValidElement(c) && c.type === "li");
-  const Pop = legacyList ? "ul" : "nav";
+  const items = () => [...(ref.current?.querySelectorAll<HTMLElement>(".tb-menu > a, .tb-menu > button") ?? [])];
   useEffect(() => {
     if (!open) return;
     items()[0]?.focus();
@@ -116,6 +113,7 @@ export function Menu({
     list[(at + (e.key === "ArrowDown" ? 1 : -1) + list.length) % list.length]?.focus();
   };
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: key handling for the trigger and its items (Esc, Up/Down), not an own control
     <span className="tb-menu-anchor" ref={ref} onKeyDown={onKey}>
       <button
         ref={btn}
@@ -131,9 +129,9 @@ export function Menu({
       </button>
       {open && (
         // biome-ignore lint/a11y/useKeyWithClickEvents: items are buttons/links (keyboard handled on the anchor); the click only closes the menu
-        <Pop id={id} className={cx("tb-menu", align === "start" && "start")} aria-label={label} onClick={() => setOpen(false)}>
+        <nav id={id} className={cx("tb-menu", align === "start" && "start")} aria-label={label} onClick={() => setOpen(false)}>
           {children}
-        </Pop>
+        </nav>
       )}
     </span>
   );
@@ -194,7 +192,13 @@ export function PayPill({ count, unpaid, onOpen, label = "Review licences" }: { 
   if (count <= 0) return null;
   const apps = `${count} ${count === 1 ? "app" : "apps"}`;
   return (
-    <button type="button" className={cx("tb-paypill", unpaid && "unpaid")} aria-haspopup="dialog" aria-label={`${label}, ${apps} in cart${unpaid ? ", unpaid" : ""}`} onClick={onOpen}>
+    <button
+      type="button"
+      className={cx("tb-paypill", unpaid && "unpaid")}
+      aria-haspopup="dialog"
+      aria-label={`${label}, ${apps} in cart${unpaid ? ", unpaid" : ""}`}
+      onClick={onOpen}
+    >
       <CartIcon />
       <span>
         {label}

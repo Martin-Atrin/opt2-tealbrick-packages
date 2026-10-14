@@ -245,27 +245,6 @@
   --tb-ring-selected: 0 0 0 2px var(--tb-ink);
   --tb-shadow-float: 0 0 0 var(--tb-hair) var(--tb-line), 0 24px 48px -28px var(--tb-shadow-ink); /* every floating surface */
   --tb-shadow-film: 0 1px 0 rgb(23 23 23 / .06), 0 30px 60px -40px rgb(23 23 23 / .35);              /* website film frame */
-
-  /* @deprecated 0.1.x aliases (remove in 0.3.0, MIGRATION.md S11) */
-  --tb-surface: var(--tb-tile);
-  --tb-white: var(--tb-tile);
-  --tb-canvas: var(--tb-film);
-  --tb-accent: var(--tb-brick);
-  --tb-veil: var(--tb-scrim);
-  --tb-font-sans: var(--tb-font);
-  --tb-primary: var(--tb-primary-fill);
-  --tb-primary-hover: var(--tb-primary-hover-fill);
-  --tb-on-primary: var(--tb-primary-on);
-  --tb-radius: var(--tb-radius-brick);
-  --tb-radius-focus: var(--tb-radius-brick);
-  --tb-radius-pill-as-is: var(--tb-radius-pill);
-  --tb-shadow-1: none;
-  --tb-shadow-2: var(--tb-shadow-float);
-  --tb-ok: var(--tb-teal);
-  --tb-progress: var(--tb-teal-ink);
-  --tb-action: var(--tb-brick);
-  --tb-blocked: var(--tb-brick-ink);
-  --tb-neutral: var(--tb-tone-stone);
 }
 
 html { color-scheme: light; }

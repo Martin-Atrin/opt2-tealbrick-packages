@@ -1,4 +1,4 @@
-/** Surfaces: Card, Panel, Section, Kicker, Eyebrow, Swatch, Notice, EmptyState, Table, Progress, CopyBlock, Choices, Steps. */
+/** Surfaces: Card, Panel, Section, Kicker, Swatch, Notice, EmptyState, Table, Progress, CopyBlock, Choices. */
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { $, $$, click, h, key, mount, skip, ui } from "./dom.ts";
@@ -33,16 +33,16 @@ test("Panel: tb-panel-tint, as=section", { skip }, async () => {
 
 test("Section: section.tb-section with an h2; first and danger classes", { skip }, async () => {
   const { Section } = await ui();
-  const m = await mount(h(Section, { title: "Danger zone" }, h("p", null, "body")));
+  const m = await mount(h(Section, { title: "Danger zone", children: h("p", null, "body") }));
   const s = $(m.root, "section");
   assert.equal(cls(s), "tb-section");
   assert.equal($(s, "h2").textContent, "Danger zone");
   assert.equal($(s, "p").textContent, "body");
-  await m.rerender(h(Section, { title: "T", first: true }, "x"));
+  await m.rerender(h(Section, { title: "T", first: true, children: "x" }));
   assert.equal(cls($(m.root, "section")), "tb-section first");
-  await m.rerender(h(Section, { title: "T", danger: true, className: "z" }, "x"));
+  await m.rerender(h(Section, { title: "T", danger: true, className: "z", children: "x" }));
   assert.equal(cls($(m.root, "section")), "tb-section danger z");
-  await m.rerender(h(Section, { title: "T", first: true, danger: true }, "x"));
+  await m.rerender(h(Section, { title: "T", first: true, danger: true, children: "x" }));
   assert.equal(cls($(m.root, "section")), "tb-section first danger");
   await m.unmount();
 });
@@ -54,25 +54,15 @@ test("Kicker: p.tb-kicker; group → tone-<group>, person → is-person, open �
   assert.equal(cls(k()), "tb-kicker");
   assert.equal(k().textContent, "Memory");
   for (const g of ["memory", "coordination", "control", "connections", "creation"]) {
-    await m.rerender(h(Kicker, { group: g as never }, "K"));
+    await m.rerender(h(Kicker, { group: g as never, children: "K" }));
     assert.equal(cls(k()), `tb-kicker tone-${g}`);
   }
-  await m.rerender(h(Kicker, { person: true }, "K"));
+  await m.rerender(h(Kicker, { person: true, children: "K" }));
   assert.equal(cls(k()), "tb-kicker is-person");
-  await m.rerender(h(Kicker, { open: true }, "K"));
+  await m.rerender(h(Kicker, { open: true, children: "K" }));
   assert.equal(cls(k()), "tb-kicker is-open");
-  await m.rerender(h(Kicker, { group: "control", person: true, open: true, className: "q" }, "K"));
+  await m.rerender(h(Kicker, { group: "control", person: true, open: true, className: "q", children: "K" }));
   assert.equal(cls(k()), "tb-kicker tone-control is-person is-open q");
-  await m.unmount();
-});
-
-test("Eyebrow (deprecated) renders a .tb-kicker with its text", { skip }, async () => {
-  const { Eyebrow } = await ui();
-  const m = await mount(h(Eyebrow, null, "Old name"));
-  const k = $(m.root, ".tb-kicker");
-  assert.equal(k.tagName, "P");
-  assert.equal(cls(k), "tb-kicker");
-  assert.equal(k.textContent, "Old name");
   await m.unmount();
 });
 
@@ -90,18 +80,16 @@ test("Swatch: aria-hidden, group tone and open classes", { skip }, async () => {
   await m.unmount();
 });
 
-test("Notice: tones, legacy mapping, roles, body in a span", { skip }, async () => {
+test("Notice: tones, roles, body in a span", { skip }, async () => {
   const { Notice } = await ui();
   const cases: [string | undefined, string][] = [
     [undefined, "tb-notice"],
     ["neutral", "tb-notice"],
     ["live", "tb-notice live"],
     ["needs-you", "tb-notice needs-you"],
-    ["ok", "tb-notice live"],
-    ["action", "tb-notice needs-you"],
   ];
   for (const [tone, expected] of cases) {
-    const m = await mount(h(Notice, { tone: tone as never }, "Saved"));
+    const m = await mount(h(Notice, { tone: tone as never, children: "Saved" }));
     const n = $(m.root, ".tb-notice");
     assert.equal(cls(n), expected, `tone ${tone}`);
     assert.equal(n.getAttribute("role"), "status");
@@ -109,7 +97,7 @@ test("Notice: tones, legacy mapping, roles, body in a span", { skip }, async () 
     assert.equal(n.textContent, "Saved");
     await m.unmount();
   }
-  const m = await mount(h(Notice, { tone: "needs-you", role: "alert", className: "q" }, "Failed"));
+  const m = await mount(h(Notice, { tone: "needs-you", role: "alert", className: "q", children: "Failed" }));
   const n = $(m.root, ".tb-notice");
   assert.equal(n.getAttribute("role"), "alert");
   assert.equal(cls(n), "tb-notice needs-you q");
@@ -138,7 +126,14 @@ test("EmptyState: h3 title, optional p, optional action", { skip }, async () => 
 
 test("Table: table.tb-table with className appended and children kept", { skip }, async () => {
   const { Table } = await ui();
-  const m = await mount(h(Table, { className: "wide", "aria-label": "Ledger" }, h("thead", null, h("tr", null, h("th", null, "Name"))), h("tbody", null, h("tr", null, h("td", null, "A")))));
+  const m = await mount(
+    h(
+      Table,
+      { className: "wide", "aria-label": "Ledger" },
+      h("thead", null, h("tr", null, h("th", null, "Name"))),
+      h("tbody", null, h("tr", null, h("td", null, "A"))),
+    ),
+  );
   const t = $(m.root, "table");
   assert.equal(cls(t), "tb-table wide");
   assert.equal(t.getAttribute("aria-label"), "Ledger");
@@ -263,7 +258,11 @@ test("Choices: radiogroup, radio roles, aria-checked, roving tabindex, title/bod
 
 test("Choices: with no value, the first enabled option is the tab stop", { skip }, async () => {
   const { Choices } = await ui();
-  const opts = [{ value: "x", title: "X", disabled: true }, { value: "y", title: "Y" }, { value: "z", title: "Z" }];
+  const opts = [
+    { value: "x", title: "X", disabled: true },
+    { value: "y", title: "Y" },
+    { value: "z", title: "Z" },
+  ];
   const m = await mount(h(Choices, { label: "P", options: opts, value: null, onChange: () => {} }));
   assert.deepEqual(
     $$(m.root, '[role="radio"]').map((r) => r.getAttribute("tabindex")),
@@ -320,35 +319,5 @@ test("Choices: arrow keys are default-prevented; a disabled option ignores click
   assert.equal(rs[1]?.getAttribute("aria-disabled"), "true");
   await click(rs[3] as Element);
   assert.deepEqual(seen, ["d"]);
-  await m.unmount();
-});
-
-test("Steps (deprecated): ol with li.done before current, aria-current=step on current, 'n-Name' text", { skip }, async () => {
-  const { Steps } = await ui();
-  const m = await mount(h(Steps, { steps: ["Name", "Plan", "Pay"], current: 1 }));
-  const ol = $(m.root, "ol");
-  assert.equal(ol.getAttribute("aria-label"), "Progress");
-  const lis = $$(ol, "li");
-  assert.deepEqual(
-    lis.map((l) => l.textContent),
-    ["1-Name", "2-Plan", "3-Pay"],
-  );
-  assert.deepEqual(
-    lis.map((l) => l.getAttribute("class")),
-    ["done", null, null],
-  );
-  assert.deepEqual(
-    lis.map((l) => l.getAttribute("aria-current")),
-    [null, "step", null],
-  );
-  await m.rerender(h(Steps, { steps: ["Name", "Plan", "Pay"], current: 2 }));
-  assert.deepEqual(
-    $$(m.root, "li").map((l) => l.getAttribute("class")),
-    ["done", "done", null],
-  );
-  assert.deepEqual(
-    $$(m.root, "li").map((l) => l.getAttribute("aria-current")),
-    [null, null, "step"],
-  );
   await m.unmount();
 });

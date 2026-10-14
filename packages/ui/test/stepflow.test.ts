@@ -6,11 +6,22 @@ import { $, $$, act, click, h, mount, skip, ui, wait } from "./dom.ts";
 const steps = (log: string[] = []) => [
   { name: "Settings", render: () => h("label", null, "Name ", h("input", { id: "f-name", defaultValue: "" })) },
   { name: "Keys", optional: "Skip, add keys later", render: () => h("input", { id: "f-key" }) },
-  { name: "Review", nextLabel: "Deploy", onNext: () => (log.push("deploy"), true), render: () => h("p", null, "Cost") },
+  {
+    name: "Review",
+    nextLabel: "Deploy",
+    onNext: () => {
+      log.push("deploy");
+      return true;
+    },
+    render: () => h("p", null, "Cost"),
+  },
   { name: "Licence", optional: "Buy later", nextLabel: "Buy licence", render: () => h("p", null, "Licence") },
 ];
 
-const visible = (root: HTMLElement) => $$(root, ".tb-step").filter((s) => !s.hidden).map((s) => s.dataset.step);
+const visible = (root: HTMLElement) =>
+  $$(root, ".tb-step")
+    .filter((s) => !s.hidden)
+    .map((s) => s.dataset.step);
 const buttons = (root: HTMLElement) => $$(root, ".tb-stepflow-foot button");
 const label = (b: HTMLElement | undefined) => b?.textContent ?? "";
 
@@ -96,7 +107,12 @@ test("fade: the middle gets .is-leaving during the change; reduced motion switch
   await m.unmount();
 
   const mm = window.matchMedia;
-  (globalThis as { matchMedia: unknown }).matchMedia = (q: string) => ({ matches: q.includes("reduce"), media: q, addEventListener() {}, removeEventListener() {} });
+  (globalThis as { matchMedia: unknown }).matchMedia = (q: string) => ({
+    matches: q.includes("reduce"),
+    media: q,
+    addEventListener() {},
+    removeEventListener() {},
+  });
   try {
     const r = await mount(h(StepFlow, { open: true, title: "Deploy", steps: steps(), onClose: () => {} }));
     await click(buttons(r.root)[2] as HTMLElement);
@@ -152,7 +168,9 @@ test("controlled step: step + onStepChange", { skip }, async () => {
 test("Dialog: native modal, kicker + h2 + Close, footer, Esc → onClose, closed = nothing rendered inside", { skip }, async () => {
   const { Dialog } = await ui();
   let closed = 0;
-  const m = await mount(h(Dialog, { open: true, title: "Remove agent", kicker: "Front desk", onClose: () => closed++, footer: h("button", null, "OK") }, h("p", null, "body")));
+  const m = await mount(
+    h(Dialog, { open: true, title: "Remove agent", kicker: "Front desk", onClose: () => closed++, footer: h("button", null, "OK") }, h("p", null, "body")),
+  );
   const dlg = $(m.root, "dialog.tb-dialog");
   assert.equal(dlg.hasAttribute("open"), true);
   assert.equal($(m.root, ".tb-kicker").textContent, "Front desk");

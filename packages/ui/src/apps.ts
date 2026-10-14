@@ -34,7 +34,21 @@ export const APPS: Readonly<Record<string, AppIdentity>> = {
 };
 
 /** Header colour per app id: every --tb-app-* token (13, incl. the six stills that have no opt2 app yet). */
-export const APP_COLOUR_IDS = ["knowledge", "scribe", "inbox", "kanban", "evolution", "rules", "fleet", "mesh", "connect", "bridge", "setup", "design", "artifacts"] as const;
+export const APP_COLOUR_IDS = [
+  "knowledge",
+  "scribe",
+  "inbox",
+  "kanban",
+  "evolution",
+  "rules",
+  "fleet",
+  "mesh",
+  "connect",
+  "bridge",
+  "setup",
+  "design",
+  "artifacts",
+] as const;
 
 /** `var(--tb-app-<id>)` when the kit has a colour for the id, else undefined (use a neutral header). */
 export function appColour(id: string): string | undefined {

@@ -31,7 +31,10 @@ test("fires on JS style objects with literal values (borderRadius / fontFamily /
 });
 
 test("stays quiet on the token forms", () => {
-  assert.deepEqual(kinds(".a { color: var(--tb-ink); border-radius: var(--tb-radius-brick); font-family: var(--tb-font); font-weight: 800; box-shadow: var(--tb-ring); }"), []);
+  assert.deepEqual(
+    kinds(".a { color: var(--tb-ink); border-radius: var(--tb-radius-brick); font-family: var(--tb-font); font-weight: 800; box-shadow: var(--tb-ring); }"),
+    [],
+  );
   assert.deepEqual(kinds('const s = { borderRadius: "var(--tb-radius-pill)", fontWeight: 900, fontFamily: "var(--tb-font-mono)" };', "x.tsx"), []);
   assert.deepEqual(kinds('import "@fontsource-variable/nunito";', "main.ts"), []);
   assert.deepEqual(kinds(".a { color: #ff0000; } /* check-system: allow (specimen) */"), []);
@@ -41,15 +44,19 @@ test("shape (C125/C126): a pill radius on a brick element fails; a brick radius 
   assert.deepEqual(kinds(".pg-btn { border-radius: var(--tb-radius-pill); }"), ["shape"]);
   assert.deepEqual(kinds(".save-button { border-radius: 999px; }"), ["radius", "shape"]);
   assert.deepEqual(kinds(".my-card { border-radius: 50%; }"), ["radius", "shape"]);
-  assert.deepEqual(kinds(".filter-chip { border-radius: var(--tb-radius-brick); }"), ["shape"]);
-  assert.deepEqual(kinds(".status-tag { border-radius: var(--tb-radius-brick); }"), ["shape"]);
-  assert.deepEqual(kinds(".pg-btn { border-radius: var(--tb-radius-brick); } .filter-chip { border-radius: var(--tb-radius-pill); }"), []);
-  // the brand mark's tile in the app-colour header is a brick, not a filter chip
-  assert.deepEqual(kinds(".tb-shell.is-app > .tb-head .tb-mark-chip { border-radius: var(--tb-radius-brick); }"), []);
+  assert.deepEqual(kinds(".tb-chip.filter { border-radius: var(--tb-radius-brick); }"), ["shape"]);
+  assert.deepEqual(kinds(".row .tag { border-radius: var(--tb-radius-brick); }"), ["shape"]);
+  assert.deepEqual(kinds(".pg-btn { border-radius: var(--tb-radius-brick); } .tb-chip { border-radius: var(--tb-radius-pill); }"), []);
+  // pill words inside another class name are not pills (the brand mark's tile in the app-colour header is a brick)
+  assert.deepEqual(kinds(".tb-shell.is-app > .tb-head .tb-mark-tile { border-radius: var(--tb-radius-brick); }"), []);
 });
 
 test("Swift rules: raw Color, literal cornerRadius, system fonts", () => {
-  assert.deepEqual(kinds('let c = Color(red: 1, green: 0, blue: 0)\n.cornerRadius(4)\n.font(.system(size: 13))', "View.swift"), ["swift-colour", "swift-radius", "swift-font"]);
+  assert.deepEqual(kinds("let c = Color(red: 1, green: 0, blue: 0)\n.cornerRadius(4)\n.font(.system(size: 13))", "View.swift"), [
+    "swift-colour",
+    "swift-radius",
+    "swift-font",
+  ]);
 });
 
 test("CLI: the kit's own src and built dist are clean; a bad tree exits 1 and names file:line; --report exits 0", () => {

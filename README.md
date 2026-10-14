@@ -1,10 +1,10 @@
 # opt2-tealbrick-packages
 
-Teal Brick opt2: shared packages (ui design system, buzz, avm).
+Tealbrick opt2: shared packages (the ui design system).
 
 **Status: opt2 build (clean-room v2 of Teal Brick), work in progress.** This repository is part of the opt2 build and lives under `Martin-Atrin` during the build; it moves to the Teal Brick organisation as one clean commit when opt2 is released. It is not the current production system.
 
-Owner lane: Lead · Portal GUI (ui), Lead · Bridge & Harness (buzz, avm).
+Owner lane: Lane A · UI build (ui).
 
 ## No secrets policy
 
@@ -28,6 +28,6 @@ New code is TypeScript (Node 24+). Swift only where the macOS app requires it.
 
 | Package | Owner lane | What |
 |---|---|---|
-| `@opt2-tealbrick/ui` (`packages/ui`) | Portal GUI | Design system: tokens (teal + burgundy, uniform 2 px radius, no dots, no green/orange) + React components. `test/brand.test.ts` enforces the brand rules. |
+| `@opt2-tealbrick/ui` (`packages/ui`) | UI build | Tealbrick design system: tokens, self-hosted Nunito, React components, the `check-system` guard. See `packages/ui/README.md` and `CHANGELOG.md`. |
 
-Release: tag `ui-v<version>`; the tarball is attached to the GitHub release (REPOS.md section 5).
+Release: tag `ui-v<version>` on a green main; the GitHub Actions release workflow (template ci-v9.5, C72/C76) builds and attaches the tarball + `.sha256` + `.integrity`. `.woodpecker/rendered.yaml` runs the rendered checks.

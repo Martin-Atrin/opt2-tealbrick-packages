@@ -2,9 +2,6 @@ import { type KeyboardEvent, useEffect, useId, useRef, useState } from "react";
 import { fieldAria, type SelectOption, useField } from "./field.tsx";
 import { cx, Ink } from "./ink.tsx";
 
-/** The change event shape 0.1.x callers used (`onChange={(e) => set(e.target.value)}`); prefer `onValueChange`. */
-export type SelectChangeEvent = { target: { value: string; name?: string }; currentTarget: { value: string; name?: string } };
-
 export type SelectProps = {
   options: SelectOption[];
   /** controlled value */
@@ -12,8 +9,6 @@ export type SelectProps = {
   /** uncontrolled start value */
   defaultValue?: string;
   onValueChange?: (value: string) => void;
-  /** @deprecated 0.1.x native-select style handler; use onValueChange */
-  onChange?: (e: SelectChangeEvent) => void;
   /** shown (muted) while no option is selected */
   placeholder?: string;
   disabled?: boolean;
@@ -35,19 +30,7 @@ const TYPEAHEAD_MS = 600;
  * typing jumps to the first option starting with the typed text. Disabled options are skipped.
  * Selected = teal wash + check; keyboard/mouse position = plate + 2px focus outline.
  */
-export function Select({
-  options,
-  value,
-  defaultValue,
-  onValueChange,
-  onChange,
-  placeholder,
-  disabled,
-  name,
-  id,
-  className,
-  ...aria
-}: SelectProps) {
+export function Select({ options, value, defaultValue, onValueChange, placeholder, disabled, name, id, className, ...aria }: SelectProps) {
   const f = useField();
   const auto = useId();
   const listId = `${auto}list`;
@@ -87,10 +70,6 @@ export function Select({
     if (!o || o.disabled) return;
     if (value === undefined) setInner(o.value);
     onValueChange?.(o.value);
-    if (onChange) {
-      const t = { value: o.value, name };
-      onChange({ target: t, currentTarget: t });
-    }
     hide();
     trigger.current?.focus();
   };
@@ -175,8 +154,18 @@ export function Select({
         </span>
         <span className="tb-chevron" aria-hidden="true" />
       </button>
-      {/* the listbox is driven from the trigger (aria-activedescendant); options take pointer input only */}
-      <ul ref={list} className="tb-listbox" role="listbox" id={listId} aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : aria["aria-label"]} tabIndex={-1} hidden={!open}>
+      {/* ARIA select-only combobox: the listbox is driven from the trigger (aria-activedescendant), so the ul/li carry
+          interactive roles without being focusable themselves (biome a11y rules for that are off for this file) */}
+      <ul
+        ref={list}
+        className="tb-listbox"
+        role="listbox"
+        id={listId}
+        aria-labelledby={labelledBy}
+        aria-label={labelledBy ? undefined : aria["aria-label"]}
+        tabIndex={-1}
+        hidden={!open}
+      >
         {options.map((o, i) => (
           // biome-ignore lint/a11y/useKeyWithClickEvents: keyboard input goes through the combobox trigger (ARIA select-only combobox)
           <li

@@ -1,7 +1,24 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "includes": ["**", "!**/node_modules", "!**/dist", "!pnpm-lock.yaml", "!tealbrick-ci.json", "!.tb-ci"]
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!pnpm-lock.yaml",
+      "!tealbrick-ci.json",
+      "!.tb-ci",
+      "!packages/ui/src/tokens.css",
+      "!packages/ui/src/components.css",
+      "!packages/ui/src/clerk-appearance.ts",
+      "!packages/ui/src/tokens.ts",
+      "!packages/ui/src/brand-mark.ts",
+      "!packages/ui/scripts/png.ts",
+      "!packages/ui/scripts/check-contrast.ts",
+      "!packages/ui/scripts/check-rendered.ts",
+      "!packages/ui/DESIGN-SOURCE.json",
+      "!packages/ui/gallery/out"
+    ]
   },
   "formatter": {
     "indentStyle": "space",
@@ -24,5 +41,28 @@
         "organizeImports": "on"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["packages/ui/src/components/select.tsx"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "noNoninteractiveElementToInteractiveRole": "off",
+            "useFocusableInteractive": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/ui/gallery/**"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "noNoninteractiveTabindex": "off"
+          }
+        }
+      }
+    }
+  ]
 }

@@ -51,7 +51,6 @@ export function AppShell({
   art,
   colour,
   portalHref = "/",
-  icon,
   pages,
   current,
   onNavigate,
@@ -68,8 +67,6 @@ export function AppShell({
   colour?: string;
   /** where the mark chip links (the Portal) */
   portalHref?: string;
-  /** @deprecated 0.1.x: a custom icon node; prefer `art` */
-  icon?: ReactNode;
   pages: readonly ShellPage[];
   current: string;
   onNavigate: (id: string) => void;
@@ -79,14 +76,7 @@ export function AppShell({
   footer?: ReactNode;
   children: ReactNode;
 }) {
-  const mark = icon ? (
-    <span className="tb-app-mark">
-      {icon}
-      <span>{title}</span>
-    </span>
-  ) : (
-    <AppMark name={title} art={art} size={32} />
-  );
+  const mark = <AppMark name={title} art={art} size={32} />;
   const style = colour ? ({ "--app": colour } as CSSProperties) : undefined;
   return (
     <div className={cx("tb-shell", colour && "is-app")} style={style}>
@@ -94,7 +84,7 @@ export function AppShell({
         {colour ? (
           <>
             <a className="tb-brand" href={portalHref} aria-label="Tealbrick Portal">
-              <span className="tb-mark-chip">
+              <span className="tb-mark-tile">
                 <BrandMark />
               </span>
             </a>

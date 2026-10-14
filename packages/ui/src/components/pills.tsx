@@ -1,34 +1,13 @@
 import type { ButtonHTMLAttributes, CSSProperties, InputHTMLAttributes, ReactNode } from "react";
 import { cx, Ink, inked } from "./ink.tsx";
 
-/**
- * Status roles (DESIGN-SYSTEM §4 Three Roles): live (teal wash) · busy (teal ink + moving bar) · needs-you (brick wash)
- * · idle (line ring, muted) · open (dashed: not made yet) · default (= idle).
- * @deprecated 0.1.x tones map onto them: ok → live, progress → busy, action → needs-you, blocked → needs-you, neutral → idle.
- */
+/** Status roles (DESIGN-SYSTEM §4 Three Roles): live (teal wash) · busy (teal ink + moving bar) · needs-you (brick wash)
+ * · idle (line ring, muted) · open (dashed: not made yet) · default (line ring). */
 export type Status = "live" | "busy" | "needs-you" | "idle" | "open" | "default";
-export type Tone = Status | "ok" | "progress" | "action" | "blocked" | "neutral";
-
-export function statusOf(tone: Tone | undefined): Status {
-  switch (tone) {
-    case "ok":
-      return "live";
-    case "progress":
-      return "busy";
-    case "action":
-    case "blocked":
-      return "needs-you";
-    case "neutral":
-    case undefined:
-      return "default";
-    default:
-      return tone;
-  }
-}
 
 /** Tag / status badge: a 28px pill (you see a state). */
-export function Tag({ tone, status, children, title, className }: { tone?: Tone; status?: Status; children: ReactNode; title?: string; className?: string }) {
-  const s = status ?? statusOf(tone);
+export function Tag({ status = "default", children, title, className }: { status?: Status; children: ReactNode; title?: string; className?: string }) {
+  const s = status;
   return (
     <span className={cx("tb-tag", s !== "default" && s, className)} title={title}>
       {inked(children)}
@@ -39,8 +18,17 @@ export function Tag({ tone, status, children, title, className }: { tone?: Tone;
 /** Counter pill (24px): brick-red fill for "waiting" counts, `ink` for neutral counts. */
 export function Count({ children, tone = "brick", label, className }: { children: ReactNode; tone?: "brick" | "ink"; label?: string; className?: string }) {
   return (
-    <span className={cx("tb-count", tone === "ink" && "ink", className)} aria-label={label}>
-      <Ink>{children}</Ink>
+    <span className={cx("tb-count", tone === "ink" && "ink", className)}>
+      {label ? (
+        <>
+          <span aria-hidden="true">
+            <Ink>{children}</Ink>
+          </span>
+          <span className="tb-sr">{label}</span>
+        </>
+      ) : (
+        <Ink>{children}</Ink>
+      )}
     </span>
   );
 }
@@ -79,6 +67,7 @@ export function Switch({
       <input
         type="checkbox"
         role="switch"
+        aria-checked={checked}
         className="tb-switch"
         checked={checked}
         defaultChecked={defaultChecked}

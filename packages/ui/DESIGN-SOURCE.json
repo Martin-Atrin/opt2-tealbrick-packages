@@ -1,34 +1,37 @@
 {
   "source": "coordination/design (opt2 design lead)",
-  "synced": "2026-10-13T15:10:30.614Z",
+  "synced": "2026-10-14T00:38:05.856Z",
   "files": {
     "tokens.css": {
       "sha256": "4def4167722c9adfaf78328e8c65927050cca0ea3bc5395a5b008bbcc8363e41",
       "to": "src/tokens.css",
-      "how": "copy"
+      "how": "strip-aliases",
+      "pkgSha256": "787866a04cf2f0aa18d6edbbaa674146416ff90be76cf9632c5c189b874c834d"
     },
     "components.css": {
-      "sha256": "09ba33d8b23fd4625a9d04b46582ab5090c2dfaf50f58cb03c3a9761fd807689",
+      "sha256": "5a496a26b121b80baf31589a60eb01f686c2216863fd32c706927c06370317da",
       "to": "src/components.css",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "5a496a26b121b80baf31589a60eb01f686c2216863fd32c706927c06370317da"
     },
     "clerk-appearance.ts": {
       "sha256": "cd4c74caadcc4e0107f990a3199d4c895ea3de7ab654f76229a59f1473649eaf",
       "to": "src/clerk-appearance.ts",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "cd4c74caadcc4e0107f990a3199d4c895ea3de7ab654f76229a59f1473649eaf"
     },
     "tokens.ts": {
-      "sha256": "546635de9754884b650e1dd646058da0a2dcfc5e967c68835f5b1a3a906ad36d",
+      "sha256": "9b941537fce6ef972cfff879ce7def3e10d95d604ce66e6e8d8eb2d0b1dfc30d",
       "to": "",
       "how": "derived"
     },
     "tools/gen-tokens-ts.ts": {
-      "sha256": "1fc898cd656082e648c82c07bb5d04ac7699fefd9eda9cc135152df5b5be16a2",
+      "sha256": "68121fbfb11e105c491c031ded18144952eb6dd7e763a936b54de27233ab8782",
       "to": "scripts/gen-tokens.ts",
       "how": "derived"
     },
     "tools/check-system.ts": {
-      "sha256": "0ea74d66e7196abf8adc8f69639765545ae4c94f139097b85544bae37ce8e0e5",
+      "sha256": "cdc56020bf77466c41eb51b183b541d9f7f57729cdcf9f156086079ad361d30c",
       "to": "src/bin/check-system.ts",
       "how": "derived"
     },
@@ -38,14 +41,15 @@
       "how": "derived"
     },
     "tools/screens.ts": {
-      "sha256": "9060733573d6e07df99beeec4ba8417cb2a7025cf150291ee5ca038017d026ff",
+      "sha256": "7701005af86a4d78dc46afa3638819eda029add8028c46054e747c50171fca4e",
       "to": "scripts/check-rendered.ts",
       "how": "derived"
     },
     "tools/png.ts": {
       "sha256": "02225badd9fb433b07c7b283125af05393f9fc2be0bfb46682c6879e60055fcf",
       "to": "scripts/png.ts",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "02225badd9fb433b07c7b283125af05393f9fc2be0bfb46682c6879e60055fcf"
     },
     "assets/apps.ts": {
       "sha256": "dbcc485466708cc275196603f0d29b1f19b06bc1dbb3d8c29e00dc1c89b111e7",
@@ -55,97 +59,116 @@
     "assets/brand/PROVENANCE.md": {
       "sha256": "8c669a6db2422980e5d9e83aebce3e03ef17d809ead76aca0e79e1bfc346dbac",
       "to": "assets/brand/PROVENANCE.md",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "8c669a6db2422980e5d9e83aebce3e03ef17d809ead76aca0e79e1bfc346dbac"
     },
     "assets/brand/logo-mark@3x.png": {
       "sha256": "dd953519e38d626538cc29591ba09f3bd4482fa1d0347c1a35daa7fdef6923ae",
       "to": "assets/brand/logo-mark@3x.png",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "dd953519e38d626538cc29591ba09f3bd4482fa1d0347c1a35daa7fdef6923ae"
     },
     "assets/brand/logo-32.png": {
       "sha256": "9c03f7f9e961a1074e7433e87f71873f7d82492dedf404e4f791e48470234581",
       "to": "assets/brand/logo-32.png",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "9c03f7f9e961a1074e7433e87f71873f7d82492dedf404e4f791e48470234581"
     },
     "assets/brand/logo-48.png": {
       "sha256": "317145f6a0635c2e68db222acc79851dfcc76dfbf79525efefab6d46e9baa1d1",
       "to": "assets/brand/logo-48.png",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "317145f6a0635c2e68db222acc79851dfcc76dfbf79525efefab6d46e9baa1d1"
     },
     "assets/brand/logo-apple-180.png": {
       "sha256": "61c628e1b502906f6329ff3d27b09cf8d04067c3f7d331d45a06d7455209b000",
       "to": "assets/brand/logo-apple-180.png",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "61c628e1b502906f6329ff3d27b09cf8d04067c3f7d331d45a06d7455209b000"
     },
     "assets/apps/knowledge@1x.webp": {
       "sha256": "24360c0cb6c16a1db383943b130b0bd87ccd6f7a9ec50d95b405e3554900072d",
       "to": "assets/apps/knowledge@1x.webp",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "24360c0cb6c16a1db383943b130b0bd87ccd6f7a9ec50d95b405e3554900072d"
     },
     "assets/apps/knowledge@2x.webp": {
       "sha256": "45af0b57915574373a1dce0a2a378f6797993b7389583e13dedc7729838f6311",
       "to": "assets/apps/knowledge@2x.webp",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "45af0b57915574373a1dce0a2a378f6797993b7389583e13dedc7729838f6311"
     },
     "assets/apps/marketplace@1x.webp": {
       "sha256": "5862020a786b201d8444978a636887e50d00be0d81ad81ba5216fb5a70a2bb70",
       "to": "assets/apps/marketplace@1x.webp",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "5862020a786b201d8444978a636887e50d00be0d81ad81ba5216fb5a70a2bb70"
     },
     "assets/apps/marketplace@2x.webp": {
       "sha256": "f4422104e9526fad6b5b69bd912096842ee422b3c5ac311536fff2aca12436dc",
       "to": "assets/apps/marketplace@2x.webp",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "f4422104e9526fad6b5b69bd912096842ee422b3c5ac311536fff2aca12436dc"
     },
     "assets/apps/work-ethic-kanban@1x.webp": {
       "sha256": "d05bc6fed100293460ca0ac43d3b5a20ac81ae9d7810f8b9edbaf76f4f2dee37",
       "to": "assets/apps/work-ethic-kanban@1x.webp",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "d05bc6fed100293460ca0ac43d3b5a20ac81ae9d7810f8b9edbaf76f4f2dee37"
     },
     "assets/apps/work-ethic-kanban@2x.webp": {
       "sha256": "eddb7b1235eb7f356cc22de32e7ad1706641208d7cde243698b1ee0c3e3b3969",
       "to": "assets/apps/work-ethic-kanban@2x.webp",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "eddb7b1235eb7f356cc22de32e7ad1706641208d7cde243698b1ee0c3e3b3969"
     },
     "assets/apps/operator-inbox@1x.webp": {
       "sha256": "025bb15050024581585d36ae227786de7ca9a8acd64133db2bc4b49035e2e975",
       "to": "assets/apps/operator-inbox@1x.webp",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "025bb15050024581585d36ae227786de7ca9a8acd64133db2bc4b49035e2e975"
     },
     "assets/apps/operator-inbox@2x.webp": {
       "sha256": "7e95016c96ed65d8465eb67c5e1f32b494d4337bdca49a8e8d9dd4fcd920420a",
       "to": "assets/apps/operator-inbox@2x.webp",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "7e95016c96ed65d8465eb67c5e1f32b494d4337bdca49a8e8d9dd4fcd920420a"
     },
     "assets/apps/rules-approvals@1x.webp": {
       "sha256": "dec50ba346f7d7f063ba2da9918553c3891b77de21e1b8c860016f5dd5be2ef1",
       "to": "assets/apps/rules-approvals@1x.webp",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "dec50ba346f7d7f063ba2da9918553c3891b77de21e1b8c860016f5dd5be2ef1"
     },
     "assets/apps/rules-approvals@2x.webp": {
       "sha256": "a4064929ae2a77369d3854eb3bc1e89b21aaf5f97a504bf33e3de65c76c2dcc6",
       "to": "assets/apps/rules-approvals@2x.webp",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "a4064929ae2a77369d3854eb3bc1e89b21aaf5f97a504bf33e3de65c76c2dcc6"
     },
     "assets/apps/organization-plane@1x.webp": {
       "sha256": "3999807851bf4f2f587dcd6ba70ed5c228e01785079134212253c88f7badac22",
       "to": "assets/apps/organization-plane@1x.webp",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "3999807851bf4f2f587dcd6ba70ed5c228e01785079134212253c88f7badac22"
     },
     "assets/apps/organization-plane@2x.webp": {
       "sha256": "7b85419be392b781c189f79c4c8eef307da90c7e9dde3cdf1e01eba16069c29f",
       "to": "assets/apps/organization-plane@2x.webp",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "7b85419be392b781c189f79c4c8eef307da90c7e9dde3cdf1e01eba16069c29f"
     },
     "assets/apps/evolution-workflow-runtime@1x.webp": {
       "sha256": "f38a1cfab4e7f54675348c77d0d5d4522ad72becec792322fd34043c4e4dc041",
       "to": "assets/apps/evolution-workflow-runtime@1x.webp",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "f38a1cfab4e7f54675348c77d0d5d4522ad72becec792322fd34043c4e4dc041"
     },
     "assets/apps/evolution-workflow-runtime@2x.webp": {
       "sha256": "c3f6d6e531886d953909ba723f95705b96f838a900724ecfe2cc2a2ae01b7acb",
       "to": "assets/apps/evolution-workflow-runtime@2x.webp",
-      "how": "copy"
+      "how": "copy",
+      "pkgSha256": "c3f6d6e531886d953909ba723f95705b96f838a900724ecfe2cc2a2ae01b7acb"
     }
   }
 }

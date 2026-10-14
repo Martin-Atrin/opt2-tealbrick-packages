@@ -8,8 +8,6 @@ export type DialogProps = {
   title: ReactNode;
   /** the kicker line above the title */
   kicker?: ReactNode;
-  /** @deprecated 0.1.x name of `kicker` */
-  eyebrow?: ReactNode;
   onClose: () => void;
   /** blocks Esc and Close so an in-flight action cannot be abandoned half way */
   busy?: boolean;
@@ -33,7 +31,6 @@ export function Dialog({
   open,
   title,
   kicker,
-  eyebrow,
   onClose,
   busy = false,
   size = "md",
@@ -59,7 +56,7 @@ export function Dialog({
       else el.removeAttribute("open");
     }
   }, [open]);
-  const k = kicker ?? eyebrow;
+  const k = kicker;
   return (
     <dialog
       ref={ref}

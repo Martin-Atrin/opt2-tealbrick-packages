@@ -35,7 +35,8 @@ export type StepFlowProps = {
   size?: "md" | "lg";
 };
 
-const FOCUSABLE = 'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), [role="combobox"]:not([disabled]), select:not([disabled]), [tabindex="0"]';
+const FOCUSABLE =
+  'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), [role="combobox"]:not([disabled]), select:not([disabled]), [tabindex="0"]';
 
 /** Reads --tb-dur-step (ms) from the element; 200ms when it cannot be read. */
 function stepDuration(el: Element | null): number {
@@ -65,7 +66,6 @@ export function StepFlow({ open, title, kicker, steps, step, initialStep = 0, on
   useEffect(() => () => clearTimeout(timer.current), []);
 
   // after a step change: top of the middle, focus the first field of the new step
-  // biome-ignore lint/correctness/useExhaustiveDependencies: runs when the visible step changes
   useEffect(() => {
     if (!moved.current) return;
     moved.current = false;

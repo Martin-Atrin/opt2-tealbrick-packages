@@ -20,12 +20,14 @@ test("src/tokens.ts equals what scripts/gen-tokens.ts generates from src/tokens.
 });
 
 test("synced design files are byte-identical to what DESIGN-SOURCE.json recorded", () => {
-  const src = JSON.parse(read("DESIGN-SOURCE.json")) as { files: Record<string, { sha256: string; to: string; how: string }> };
-  const copies = Object.entries(src.files).filter(([, f]) => f.how === "copy");
+  const src = JSON.parse(read("DESIGN-SOURCE.json")) as { files: Record<string, { sha256: string; pkgSha256?: string; to: string; how: string }> };
+  const copies = Object.entries(src.files).filter(([, f]) => f.how !== "derived");
   assert.ok(copies.length >= 20);
   for (const [from, f] of copies) {
-    const sha = createHash("sha256").update(readFileSync(join(root, f.to))).digest("hex");
-    assert.equal(sha, f.sha256, `${f.to} differs from the synced design file ${from}: re-sync (scripts/sync-design.ts), never hand-edit`);
+    const sha = createHash("sha256")
+      .update(readFileSync(join(root, f.to)))
+      .digest("hex");
+    assert.equal(sha, f.pkgSha256 ?? f.sha256, `${f.to} differs from the synced design file ${from}: re-sync (scripts/sync-design.ts), never hand-edit`);
   }
 });
 
@@ -47,18 +49,28 @@ test("resolved values are literals; the C125/C126 shapes and the C148 brick red 
   assert.equal(resolved.radiusPill, "999px");
   assert.equal(resolved.radiusSwatch, "2px");
   assert.equal(resolved.brick, "#a94b43");
-  assert.equal(resolved.radius, "6px"); // 0.1.x alias → brick
+  assert.equal("radius" in resolved, false); // C133: no 0.1.x aliases
+  assert.equal("surface" in resolved, false);
   assert.match(resolved.font, /^"Nunito"/);
   assert.ok(Object.keys(dark).length > 10);
   for (const id of ["knowledge", "kanban", "inbox", "evolution", "rules", "fleet", "connect"]) assert.ok(defined.has(`--tb-app-${id}`), id);
 });
 
-test("legacy.css aliases (0.1.x names) only reference tokens that exist, and do not redefine 0.2 names", () => {
-  const legacy = read("src/legacy.css");
-  const names = [...legacy.matchAll(/(--tb-[a-z0-9-]+)\s*:/g)].map((m) => m[1] ?? "");
-  assert.ok(names.length > 30);
-  for (const n of names) assert.equal(defined.has(n), false, `${n} is already a 0.2 token`);
-  for (const m of legacy.matchAll(/var\((--tb-[a-z0-9-]+)\)/g)) assert.ok(defined.has(m[1] ?? ""), `${m[1]} is not defined in tokens.css`);
+test("C133: no 0.1.x token names ship, and every var() the CSS reads is defined", () => {
+  for (const n of [
+    "--tb-surface",
+    "--tb-white",
+    "--tb-accent",
+    "--tb-radius",
+    "--tb-primary",
+    "--tb-teal-700",
+    "--tb-burgundy-700",
+    "--tb-text-sm",
+    "--tb-font-serif",
+  ])
+    assert.equal(defined.has(n), false, n);
+  const comps = read("src/components.css") + read("src/kit.css");
+  for (const m of comps.matchAll(/var\((--tb-[a-z0-9-]+)/g)) assert.ok(defined.has(m[1] ?? ""), `${m[1]} is not defined in tokens.css`);
 });
 
 test("check-contrast: every token pair meets AA in light and dark (0 failures)", () => {

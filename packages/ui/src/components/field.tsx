@@ -12,7 +12,21 @@ export const useField = (): FieldInfo | null => useContext(FieldContext);
  * aria-invalid and a 2px brick ring). Kit controls inside (TextInput, Textarea, Select, NativeSelect) are wired by
  * aria-labelledby / aria-describedby. The wrapper is a <label>, so any other control passed as a child is still named.
  */
-export function Field({ label, hint, error, id, className, children }: { label: ReactNode; hint?: ReactNode; error?: ReactNode; id?: string; className?: string; children: ReactNode }) {
+export function Field({
+  label,
+  hint,
+  error,
+  id,
+  className,
+  children,
+}: {
+  label: ReactNode;
+  hint?: ReactNode;
+  error?: ReactNode;
+  id?: string;
+  className?: string;
+  children: ReactNode;
+}) {
   const auto = useId();
   const controlId = id ?? `${auto}c`;
   const labelId = `${auto}l`;

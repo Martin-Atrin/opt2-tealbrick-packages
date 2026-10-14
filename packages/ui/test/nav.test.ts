@@ -52,14 +52,24 @@ test("Tabs: badge renders a .tb-count (not for 0 or undefined)", { skip }, async
   assert.equal($$(tabs[2] as Element, ".tb-count").length, 0);
   // the count is a sibling of the label, not inside it
   assert.equal($$(tabs[1] as Element, ".tb-ink .tb-count").length, 0);
-  await m.rerender(h(Tabs, { label: "Views", tabs: [{ value: "a", label: "A", badge: "new" }, { value: "b", label: "B", badge: "" }], value: "a", onChange: () => {} }));
+  await m.rerender(
+    h(Tabs, {
+      label: "Views",
+      tabs: [
+        { value: "a", label: "A", badge: "new" },
+        { value: "b", label: "B", badge: "" },
+      ],
+      value: "a",
+      onChange: () => {},
+    }),
+  );
   const t2 = $$(m.root, '[role="tab"]');
   assert.equal($(t2[0] as Element, ".tb-count").textContent, "new");
   assert.equal($$(t2[1] as Element, ".tb-count").length, 0);
   await m.unmount();
 });
 
-test("Tabs: aria-controls points at ${panelId}-${value} only when panelId is given", { skip }, async () => {
+test("Tabs: aria-controls points at panelId-value only when panelId is given", { skip }, async () => {
   const { Tabs } = await ui();
   const m = await mount(h(Tabs, { label: "Views", tabs: TABS, value: "all", onChange: () => {}, panelId: "panel" }));
   assert.deepEqual(
@@ -127,7 +137,13 @@ test("Tabs: handled keys are default-prevented; click selects", { skip }, async 
 
 test("Menu: trigger has aria-haspopup, aria-expanded false→true on click, popover .tb-menu appears", { skip }, async () => {
   const { Menu } = await ui();
-  const m = await mount(h(Menu, { label: "More actions", trigger: "More" }, h("button", { type: "button" }, "Rename"), h("a", { href: "/x" }, "Open")));
+  const m = await mount(
+    h(Menu, {
+      label: "More actions",
+      trigger: "More",
+      children: [h("button", { key: "r", type: "button" }, "Rename"), h("a", { key: "o", href: "/x" }, "Open")],
+    }),
+  );
   const t = $(m.root, "button.tb-btn");
   assert.equal(t.getAttribute("aria-haspopup"), "true");
   assert.equal(t.getAttribute("aria-expanded"), "false");
@@ -153,7 +169,9 @@ test("Menu: trigger has aria-haspopup, aria-expanded false→true on click, popo
 
 test("Menu: Escape closes and returns focus to the trigger; Arrow keys move between items", { skip }, async () => {
   const { Menu } = await ui();
-  const m = await mount(h(Menu, { label: "Actions", trigger: "Actions" }, h("button", { type: "button" }, "One"), h("button", { type: "button" }, "Two"), h("button", { type: "button" }, "Three")));
+  const m = await mount(
+    h(Menu, { label: "Actions", trigger: "Actions", children: ["One", "Two", "Three"].map((t) => h("button", { key: t, type: "button" }, t)) }),
+  );
   const t = $(m.root, "button.tb-btn");
   await click(t);
   const items = () => $$(m.root, ".tb-menu button");
@@ -186,7 +204,15 @@ test("Menu: Escape closes and returns focus to the trigger; Arrow keys move betw
 test("Menu: clicking an item runs it and closes the menu; an outside pointer closes", { skip }, async () => {
   const { Menu } = await ui();
   const seen: string[] = [];
-  const m = await mount(h(Menu, { label: "Actions", trigger: "Actions", variant: "primary", align: "start" }, h("button", { type: "button", onClick: () => seen.push("rename") }, "Rename")));
+  const m = await mount(
+    h(Menu, {
+      label: "Actions",
+      trigger: "Actions",
+      variant: "primary",
+      align: "start",
+      children: h("button", { type: "button", onClick: () => seen.push("rename") }, "Rename"),
+    }),
+  );
   const t = $(m.root, "button.tb-btn");
   assert.equal(cls(t), "tb-btn primary");
   await click(t);
@@ -204,23 +230,34 @@ test("Menu: clicking an item runs it and closes the menu; an outside pointer clo
   await m.unmount();
 });
 
-test("Menu: legacy <li> children render inside <ul class=tb-menu>", { skip }, async () => {
+test("Menu: an <hr> separates groups and is skipped by arrow keys; links are items too", { skip }, async () => {
   const { Menu } = await ui();
-  const m = await mount(h(Menu, { label: "Old", trigger: "Old" }, h("li", { key: "a" }, h("button", { type: "button" }, "A")), h("li", { key: "b" }, h("a", { href: "/b" }, "B"))));
+  const m = await mount(
+    h(Menu, {
+      label: "Account",
+      trigger: "Account",
+      children: [h("a", { key: "p", href: "/profile" }, "Profile"), h("hr", { key: "s" }), h("button", { key: "o", type: "button" }, "Sign out")],
+    }),
+  );
   await click($(m.root, "button.tb-btn"));
-  const pop = $(m.root, ".tb-menu");
-  assert.equal(pop.tagName, "UL");
-  assert.equal($$(pop, "li").length, 2);
-  assert.equal(document.activeElement, $(pop, "li button")); // first item focusable through li > button
+  const pop = $(m.root, "nav.tb-menu");
+  assert.equal($$(pop, "hr").length, 1);
+  const items = $$(pop, "a, button");
+  assert.equal(items.length, 2);
+  assert.equal(document.activeElement, items[0]);
+  await key(items[0] as Element, "ArrowDown"); // hr is not an item
+  assert.equal(document.activeElement, items[1]);
+  await key(items[1] as Element, "ArrowDown"); // wraps
+  assert.equal(document.activeElement, items[0]);
   await m.unmount();
 });
 
 test("Toast: open=false renders nothing; open renders role=status aria-live=polite with the message", { skip }, async () => {
   const { Toast } = await ui();
-  const m = await mount(h(Toast, { open: false }, "Saved"));
+  const m = await mount(h(Toast, { open: false, children: "Saved" }));
   assert.equal($$(m.root, ".tb-toast").length, 0);
   assert.equal(m.root.innerHTML, "");
-  await m.rerender(h(Toast, { open: true }, "Saved"));
+  await m.rerender(h(Toast, { open: true, children: "Saved" }));
   const t = $(m.root, ".tb-toast");
   assert.equal(t.getAttribute("role"), "status");
   assert.equal(t.getAttribute("aria-live"), "polite");
@@ -232,7 +269,9 @@ test("Toast: open=false renders nothing; open renders role=status aria-live=poli
 test("Toast: action button (.tb-link) calls onAction; Close calls onClose", { skip }, async () => {
   const { Toast } = await ui();
   const seen: string[] = [];
-  const m = await mount(h(Toast, { open: true, actionLabel: "Undo", onAction: () => seen.push("undo"), onClose: () => seen.push("close") }, "Deleted"));
+  const m = await mount(
+    h(Toast, { open: true, actionLabel: "Undo", onAction: () => seen.push("undo"), onClose: () => seen.push("close"), children: "Deleted" }),
+  );
   const action = $(m.root, "button.tb-link");
   assert.equal(action.textContent, "Undo");
   assert.equal(action.getAttribute("type"), "button");
@@ -249,23 +288,24 @@ test("Toast: action button (.tb-link) calls onAction; Close calls onClose", { sk
 test("Toast: auto-closes after duration when there is no action; not with an action; duration 0 stays", { skip }, async () => {
   const { Toast } = await ui();
   const seen: string[] = [];
-  const m = await mount(h(Toast, { open: true, duration: 30, onClose: () => seen.push("auto") }, "Saved"));
+  const log = (s: string) => void seen.push(s); // `seen` is narrowed by deepEqual, so push through a helper
+  const m = await mount(h(Toast, { open: true, duration: 30, onClose: () => log("auto"), children: "Saved" }));
   assert.deepEqual(seen, []);
   await wait(60);
   assert.deepEqual(seen, ["auto"]);
   await m.unmount();
 
-  const withAction = await mount(h(Toast, { open: true, duration: 30, actionLabel: "Undo", onClose: () => seen.push("with-action") }, "Deleted"));
+  const withAction = await mount(h(Toast, { open: true, duration: 30, actionLabel: "Undo", onClose: () => log("with-action"), children: "Deleted" }));
   await wait(60);
   assert.deepEqual(seen, ["auto"]);
   await withAction.unmount();
 
-  const zero = await mount(h(Toast, { open: true, duration: 0, onClose: () => seen.push("zero") }, "Stays"));
+  const zero = await mount(h(Toast, { open: true, duration: 0, onClose: () => log("zero"), children: "Stays" }));
   await wait(60);
   assert.deepEqual(seen, ["auto"]);
   await zero.unmount();
 
-  const closed = await mount(h(Toast, { open: false, duration: 30, onClose: () => seen.push("closed") }, "x"));
+  const closed = await mount(h(Toast, { open: false, duration: 30, onClose: () => log("closed"), children: "x" }));
   await wait(60);
   assert.deepEqual(seen, ["auto"]);
   await closed.unmount();

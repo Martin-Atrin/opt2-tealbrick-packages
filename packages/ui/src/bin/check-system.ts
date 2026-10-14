@@ -3,6 +3,7 @@
      check-system <dir> [<dir> ...] [--ignore <name>]... [--report]
    Derived from the design lead's tools/check-system.ts (coordination/design, DESIGN-SYSTEM.md §8); same rules, plus the
    JS style-object forms (borderRadius / fontFamily / fontWeight literals in .ts/.tsx) and repeatable --ignore.
+   Shape rule = the design version (pill classes are whole class names: tb-chip, chip, tag, count, …).
    Fails (exit 1) when a source file uses a value outside the Tealbrick token set:
    - a raw colour (hex / rgb() / hsl()) outside tokens.css  (check-system: allow — this file names the patterns)
    - a font-family other than var(--tb-font) / var(--tb-font-mono) / inherit
@@ -68,9 +69,10 @@ const RULES: [string, RegExp, (v: string) => boolean][] = [
 ];
 
 // shape pass: selector-aware, CSS only (innermost rule blocks; enough for flat component CSS)
-// `mark-chip` is the brand mark's 40px brick tile in the app-colour header (components.css, C148), not a filter chip
-const PILL_SEL = /(?:^|[.\-_#\s>["=])(tags?|(?<!mark-)chips?|badge|count|pill|paypill|status-pill|switch|segmented|radio)(?![a-z])/i;
-const BRICK_SEL = /(btn|button|input|select|textarea|card|panel|dialog|inspector|toast|menu|tabs?|nav|node|notice|copy|field|avatar|table|choice|close)(?![a-z])/i;
+// pill classes are matched as whole class names (tb-chip, tb-tag, …), never as a word inside another class (tb-mark-tile)
+const PILL_SEL = /(?:^|[.#\s>["=])(?:tb-)?(tags?|chips?|badge|count|pill|paypill|status-pill|switch|segmented|seg|radio)(?![a-z-])/i;
+const BRICK_SEL =
+  /(btn|button|input|select|textarea|card|panel|dialog|inspector|toast|menu|tabs?|nav|node|notice|copy|field|avatar|table|choice|close)(?![a-z])/i;
 const IS_PILL = /999px|var\(--tb-radius-pill\)|50%/;
 const IS_BRICK = /var\(--tb-radius-brick\)|var\(--tb-radius\)|\b[1-9]px\b/;
 
@@ -89,7 +91,8 @@ export function shapeHits(text: string, file: string): Hit[] {
     const pillEl = parts.every((x) => PILL_SEL.test(x));
     const brickEl = parts.some((x) => BRICK_SEL.test(last(x)) && !PILL_SEL.test(x) && !/::(before|after)/.test(x));
     if (brickEl && IS_PILL.test(r)) out.push({ kind: "shape", value: `pill radius on brick element ${sel.slice(0, 50)}`, where: `${file}:${line}` });
-    else if (pillEl && IS_BRICK.test(r) && !IS_PILL.test(r)) out.push({ kind: "shape", value: `brick radius on pill element ${sel.slice(0, 50)}`, where: `${file}:${line}` });
+    else if (pillEl && IS_BRICK.test(r) && !IS_PILL.test(r))
+      out.push({ kind: "shape", value: `brick radius on pill element ${sel.slice(0, 50)}`, where: `${file}:${line}` });
   }
   return out;
 }
