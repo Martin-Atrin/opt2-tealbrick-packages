@@ -1,0 +1,49 @@
+/* @opt2-tealbrick/ui clerk.css — Clerk components on our design (C138). clerkAppearance styles them, but Clerk's own rules sit in @layer clerk
+   with higher specificity and keep their hairline shadows and the primary button's lift. Unlayered page CSS wins over
+   any layer, so these few rules put the brick edges, rings and the flat primary back (DESIGN-SYSTEM §5d). Tokens only. */
+.cl-rootBox {
+  width: auto;
+  max-width: 100%;
+}
+.cl-formFieldInput,
+.cl-otpCodeFieldInput {
+  box-shadow: inset 0 0 0 var(--tb-hair) var(--tb-field-edge);
+}
+.cl-formFieldInput:hover {
+  box-shadow: inset 0 0 0 var(--tb-hair) var(--tb-field-hover-edge);
+}
+.cl-formFieldInput:focus,
+.cl-otpCodeFieldInput:focus {
+  box-shadow: inset 0 0 0 var(--tb-hair) var(--tb-field-edge);
+  outline: var(--tb-focus-width) solid var(--tb-focus);
+  outline-offset: var(--tb-focus-offset-tight);
+}
+.cl-formButtonPrimary {
+  box-shadow: none;
+}
+.cl-formButtonPrimary:hover {
+  background: var(--tb-primary-hover-fill);
+  color: var(--tb-primary-hover-on);
+}
+.cl-socialButtonsBlockButton,
+.cl-profileSectionPrimaryButton {
+  box-shadow: inset 0 0 0 var(--tb-hair) var(--tb-secondary-edge);
+}
+.cl-socialButtonsBlockButton:hover,
+.cl-profileSectionPrimaryButton:hover {
+  background: var(--tb-secondary-hover-fill);
+  color: var(--tb-secondary-on);
+}
+.cl-formButtonPrimary:focus-visible,
+.cl-socialButtonsBlockButton:focus-visible {
+  outline: var(--tb-focus-width) solid var(--tb-focus);
+  outline-offset: var(--tb-focus-offset-tight);
+}
+/* the page's .tb-root heading rules must not resize Clerk's titles */
+.tb-root .cl-headerTitle {
+  font-size: var(--tb-text-h2);
+  line-height: round(nearest, 1.1em, 2px);
+}
+.tb-root .cl-headerSubtitle {
+  font-size: var(--tb-text-label);
+}
