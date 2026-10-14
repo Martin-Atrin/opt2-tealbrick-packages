@@ -280,6 +280,44 @@ for (const [file, , widths] of pages) for (const width of widths ?? [1280, 375])
   }
   await ctx.close();
 }
+/* ---------------------------------------------------------------- DESCENDER test (0.2.1)
+   The Select value trims its box to the cap height (C128 ink centring); descenders (g j p q y) must still paint below
+   that box, never be clipped by it. For every Select value with a descender letter: the label's ink must reach at least
+   2px (CSS) below the trimmed box bottom, measured on pixels at DPR 1 and 2. */
+const descRows: { page: string; width: number; dpr: number; label: string; below: number }[] = [];
+for (const file of ['index.html']) for (const width of [1280, 375]) for (const dpr of [1, 2]) { // the gallery's Field section, always
+  const ctx = await browser.newContext({ viewport: { width, height: 800 }, deviceScaleFactor: dpr, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  await page.goto(base + file);
+  await page.waitForSelector('#root > *');
+  await page.evaluate(() => document.fonts.ready);
+  const n = await page.evaluate(() => { const els = [...document.querySelectorAll('.tb-select-value')].filter(e => /[gjpqy]/.test(e.textContent ?? '')); els.forEach((e, k) => e.setAttribute('data-desc', String(k))); return els.length; });
+  for (let k = 0; k < n; k++) {
+    const t = await page.evaluate((k) => {
+      const el = document.querySelector<HTMLElement>(`[data-desc="${k}"]`)!;
+      el.scrollIntoView({ block: 'center' });
+      const r = el.getBoundingClientRect(), tr = el.closest('.tb-select-trigger')!.getBoundingClientRect();
+      return { box: [r.left, r.top, r.right, r.bottom], trig: [tr.left, tr.top, tr.right, tr.bottom], fg: getComputedStyle(el).color, label: (el.textContent ?? '').slice(0, 30) };
+    }, k);
+    const [l, , rr, bottom] = t.box, [, tt, , tb] = t.trig;
+    const cx = Math.floor(l), cy = Math.floor(tt), cw = Math.ceil(rr) - cx, ch = Math.ceil(tb) - cy;
+    const img = decodePng(await page.screenshot({ clip: { x: cx, y: cy, width: cw, height: ch } }));
+    const fg = (t.fg.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+    const fill = img.px(1, Math.round((bottom - cy + 6) * dpr)); // field fill left of the text, below the box
+    const need = Math.max(...fg.map((c, i) => Math.abs(c - fill[i]))) * .5;
+    let low = -1;
+    for (let y = Math.round((bottom - cy) * dpr); y < Math.min(img.height, Math.round((tb - cy - 3) * dpr)); y++)
+      for (let x = 0; x < img.width; x++) { const p = img.px(x, y); if (Math.max(...p.map((c, i) => Math.abs(c - fill[i]))) >= need) { low = y; break; } }
+    const below = low < 0 ? 0 : Math.round(((low + 1) / dpr - (bottom - cy)) * 100) / 100;
+    descRows.push({ page: file, width, dpr, label: t.label, below });
+  }
+  await ctx.close();
+}
+const descFails = descRows.filter(r => r.below < 2);
+for (const f of descFails) console.error(`DESCENDER ${f.page} ${f.width}@${f.dpr}x "${f.label}": ink reaches ${f.below}px below the value box (needs >= 2; clipped)`);
+console.log(`descenders: ${descRows.length} Select values with g/j/p/q/y measured, ${descFails.length} clipped`);
+if (!descRows.length) { console.error('descenders: no Select value with a descender found on the gallery (the check would be blind)'); process.exit(1); }
+
 const inkFails = inkRows.filter(r => Math.abs(r.diff) > .5);
 const byControl = new Map<string, number[]>();
 for (const r of inkRows) { const k = r.control.replace(/\.(primary|quiet|danger|confirm|lg|sm|block|live|busy|needs-you|idle|open|ink|code|tb-ink|hide-phone|only-phone|tb-next|hide-wide)\b/g, '').replace(/\.$/, ''); byControl.set(k, [...(byControl.get(k) ?? []), r.diff]); }
@@ -296,4 +334,4 @@ const uniq = [...new Map(report.map(r => [`${r.page}|${r.width}|${r.theme}|${r.w
 if (!inkOnly) writeFileSync(join(out, 'contrast-report.json'), JSON.stringify({ when: new Date().toISOString(), pagesRendered: pages.length, screenshots: shots, pairsChecked: checked, failures: uniq }, null, 2));
 for (const f of uniq) console.error(`FAIL ${f.page} ${f.width} ${f.theme} [${f.state}] ${f.what} ${f.ratio} < ${f.need}: ${f.where}`);
 if (!inkOnly) console.log(`screens: ${shots} screenshots, ${checked} rendered pairs checked (text + outlines, default/hover/focus/open), ${uniq.length} failures`);
-process.exit(uniq.length || inkFails.length ? 1 : 0);
+process.exit(uniq.length || inkFails.length || descFails.length ? 1 : 0);
