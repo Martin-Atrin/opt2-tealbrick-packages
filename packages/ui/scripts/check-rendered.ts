@@ -223,7 +223,12 @@ for (const [file, steps, widths] of inkOnly ? [] : pages) for (const width of wi
 /* ---------------------------------------------------------------- INK test (C128) */
 const CONTROLS = '.tb-btn, .tb-tag, .tb-chip, .tb-count, .tb-close, .tb-avatar, .tb-status-pill, .tb-wire-label, .tb-option, .tb-tab, .tb-seg, .tb-select-trigger, .tb-input';
 const inkRows: { page: string; width: number; dpr: number; theme: string; control: string; label: string; height: number; top: number; bottom: number; diff: number }[] = [];
-for (const [file, , widths] of pages) for (const width of widths ?? [1280, 375]) for (const dpr of [1, 2]) for (const theme of ['light', 'dark']) {
+// 0.2.2: the open listbox too — the options of the gallery's long-label Select (capitals + descenders) are measured
+// with the list open (`#options` = index.html with that Select opened from the keyboard; the active option shows its
+// 2px inset focus ring, as users see it)
+const inkPages: [string, number, number[]?][] = [...pages, ...(pages.some(([f]) => f === 'index.html') || !ONLY ? [['index.html#options', 0] as [string, number]] : [])];
+for (const [entry, , widths] of inkPages) for (const width of widths ?? [1280, 375]) for (const dpr of [1, 2]) for (const theme of ['light', 'dark']) {
+  const file = entry.replace('#options', ''), openList = entry.endsWith('#options');
   const ctx = await browser.newContext({ viewport: { width, height: 800 }, deviceScaleFactor: dpr, reducedMotion: 'reduce' });
   ctx.setDefaultTimeout(PAGE_TIMEOUT);
   const page = await ctx.newPage();
@@ -231,7 +236,13 @@ for (const [file, , widths] of pages) for (const width of widths ?? [1280, 375])
   await page.waitForSelector('#root > *');
   await page.evaluate((dark) => { if (dark) document.documentElement.setAttribute('data-theme', 'dark'); return document.fonts.ready; }, theme === 'dark');
   if (theme === 'dark' && await page.evaluate(() => document.documentElement.dataset.theme) !== 'dark') throw new Error('dark theme not applied');
-  const n = await page.evaluate((sel) => { document.querySelectorAll(sel).forEach((el, k) => el.setAttribute('data-ink', String(k))); return document.querySelectorAll(sel).length; }, CONTROLS);
+  if (openList) {
+    const trig = page.locator('[data-gallery="options"] .tb-select-trigger');
+    await trig.scrollIntoViewIfNeeded(); await trig.focus(); await page.keyboard.press('ArrowDown'); await page.keyboard.press('ArrowDown');
+    await page.waitForSelector('[data-gallery="options"] .tb-listbox:not([hidden])');
+  }
+  const n = await page.evaluate((sel) => { document.querySelectorAll(sel).forEach((el, k) => el.setAttribute('data-ink', String(k))); return document.querySelectorAll(sel).length; }, openList ? '[data-gallery="options"] .tb-listbox:not([hidden]) .tb-option' : CONTROLS);
+  if (openList && n < 3) throw new Error('options pass: the long-label Select did not open (the check would be blind)');
   const rgb = (c: string) => (c.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
   for (let k = 0; k < n; k++) {
     // one control at a time: scroll it into view, measure in the page, then clip-screenshot just its box
@@ -276,7 +287,7 @@ for (const [file, , widths] of pages) for (const width of widths ?? [1280, 375])
     if (a < 0) continue;
     if (process.env.INK_DEBUG && t.label.startsWith(process.env.INK_DEBUG) && file.startsWith(process.env.INK_PAGE ?? '')) console.log('DEBUG', file, width, dpr, theme, t.label, t.box, 'need', need, [...Array(y1 - y0 + 1)].map((_, q) => cov(y0 + q)).join(' '));
     const gapTop = (a - top) / dpr, gapBottom = (bottom - (b + 1)) / dpr;
-    inkRows.push({ page: file, width, dpr, theme, control: t.control, label: t.label, height: Math.round((bb - bt) * 100) / 100, top: Math.round(gapTop * 100) / 100, bottom: Math.round(gapBottom * 100) / 100, diff: Math.round((gapTop - gapBottom) * 100) / 100 });
+    inkRows.push({ page: entry, width, dpr, theme, control: t.control, label: t.label, height: Math.round((bb - bt) * 100) / 100, top: Math.round(gapTop * 100) / 100, bottom: Math.round(gapBottom * 100) / 100, diff: Math.round((gapTop - gapBottom) * 100) / 100 });
   }
   await ctx.close();
 }

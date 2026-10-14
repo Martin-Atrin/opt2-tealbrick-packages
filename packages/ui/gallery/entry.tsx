@@ -136,6 +136,20 @@ function Components() {
           <Field label="Destination" hint="Where the app and its data live.">
             <Select options={DESTINATIONS} value={dest} onValueChange={setDest} />
           </Field>
+          <div data-gallery="options">
+            <Field label="Template (long labels)">
+              <Select
+                options={[
+                  { value: "weekly", label: "Template: Weekly report" },
+                  { value: "quarterly", label: "Quarterly planning, Gary’s jobs" },
+                  { value: "ops", label: "Operator Inbox: Typical replies", meta: "used 4×" },
+                  { value: "q", label: "Query: Jumpy spring pipeline" },
+                  { value: "xyz", label: "XYZ project (paused)", disabled: true },
+                ]}
+                defaultValue="quarterly"
+              />
+            </Field>
+          </div>
           <Field label="Status (descenders)">
             <Select
               options={[
