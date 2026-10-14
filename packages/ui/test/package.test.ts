@@ -112,3 +112,11 @@ test("clerk-appearance: Core-3 names, literal colours from the tokens, 6px, Nuni
       assert.match(tokensCss, new RegExp(`${m[1]}\\s*:`), `${m[1]} in clerk elements`);
   }
 });
+
+test("0.2.1: the Select value keeps descenders (overflow clip + margin wins) and AppIcon initials are upright", { skip: distSkip }, () => {
+  const comps = readFileSync(join(root, "dist/components.css"), "utf8");
+  const last = (sel: string) => comps.lastIndexOf(sel);
+  assert.ok(last(".tb-select-trigger .tb-select-value") > comps.lastIndexOf(".tb-select-value { overflow: hidden"));
+  assert.match(comps.slice(last(".tb-select-trigger .tb-select-value")), /overflow: clip;\s*overflow-clip-margin: 0\.35em;/);
+  assert.match(comps.slice(comps.lastIndexOf(".tb-app-icon {")), /font-style: normal/);
+});
