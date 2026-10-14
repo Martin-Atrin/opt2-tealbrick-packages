@@ -1,5 +1,10 @@
 # @opt2-tealbrick/ui changelog
 
+## 0.2.2 (2026-10-14)
+
+- New export `@opt2-tealbrick/ui/clerk.css`: unlayered rules that put the brick field and button edges, the flat primary, the focus rings and the title size back on Clerk's components. `clerkAppearance` puts Clerk's CSS in `@layer clerk`, but Clerk's own rules there are more specific than the appearance elements, so its hairline shadows and lifted primary stayed (found on the live Portal sign-in, QA 2026-10-14). Import it next to `components.css` wherever Clerk renders.
+- The rendered check now measures the options of an OPEN listbox (long labels with capitals, descenders, meta, disabled): 0.00px off on mac and Linux, DPR 1 and 2.
+
 ## 0.2.1 (2026-10-14)
 
 Fixes found while moving the Portal GUI onto 0.2.0. No API change.

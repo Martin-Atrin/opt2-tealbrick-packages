@@ -15,6 +15,7 @@ Releases are CI-built GitHub tarballs (never npm). Pin the URL and its integrity
 ```ts
 import "@opt2-tealbrick/ui/tokens.css"; // tokens + @font-face Nunito + base + scrollbars + reduced motion
 import "@opt2-tealbrick/ui/components.css";
+import "@opt2-tealbrick/ui/clerk.css"; // only where Clerk components render
 import { Button, Field, Select, StepFlow } from "@opt2-tealbrick/ui";
 import { clerkAppearance } from "@opt2-tealbrick/ui/clerk-appearance"; // <ClerkProvider appearance={clerkAppearance("light")}>
 import { resolved, cssVar } from "@opt2-tealbrick/ui/tokens"; // literal values (native, Clerk) / var() refs

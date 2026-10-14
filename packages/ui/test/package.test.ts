@@ -121,3 +121,11 @@ test("0.2.1: the Select value keeps descenders (overflow clip + margin wins) and
   assert.match(comps.slice(comps.lastIndexOf(".tb-app-icon {")), /font-style: normal/);
   assert.match(comps.slice(comps.lastIndexOf("button.tb-choice {")), /border: 0;[\s\S]*font: inherit;/);
 });
+
+test("0.2.2: clerk.css ships (unlayered Clerk fixes on tokens only)", { skip: distSkip }, () => {
+  const css = readFileSync(join(root, "dist/clerk.css"), "utf8");
+  assert.match(css, /\.cl-formFieldInput/);
+  assert.match(css, /\.cl-formButtonPrimary/);
+  assert.doesNotMatch(css.replace(/\/\*[\s\S]*?\*\//g, ""), /@layer/); // unlayered, so it wins over Clerk's layer
+  assert.equal((pkg.exports as Record<string, unknown>)["./clerk.css"], "./dist/clerk.css");
+});
