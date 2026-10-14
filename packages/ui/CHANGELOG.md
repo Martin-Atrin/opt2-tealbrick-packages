@@ -1,5 +1,11 @@
 # @opt2-tealbrick/ui changelog
 
+## 0.2.1 (2026-10-14)
+
+Fixes found while moving the Portal GUI onto 0.2.0. No API change.
+- Select: descenders in the value ("y", "g", "p") are no longer cut. components.css (design source) sets `overflow: clip` with a clip margin on `.tb-select-value`, then resets it to `overflow: hidden`; kit.css restores the clip. Reported to the design lead.
+- AppIcon: the fallback initial (no art) is upright, because the icon element is an `<i>`.
+
 ## 0.2.0 (2026-10-14)
 
 This release is the Tealbrick design system from the approved design (C146, C148, C150), and it **breaks** 0.1.x. opt2 is version 0, so 0.2.0 has no compatibility aliases (C133). Consumers move in one step, using the table below.

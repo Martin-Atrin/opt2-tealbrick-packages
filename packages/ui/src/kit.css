@@ -180,3 +180,15 @@ dialog.tb-dialog.tb-stepflow {
   box-shadow: none;
   cursor: not-allowed;
 }
+
+/* ------------------------------------------------------------------ 0.2.1 fixes
+   Select value: components.css sets `overflow: clip` + a clip margin (so descenders survive the cap-height trim), but a
+   later rule there resets it to `overflow: hidden`, which cuts "y", "g", "p" ("My workspace" read "Mv workspace").
+   AppIcon is an <i>: its fallback initial must not be italic. */
+.tb-select-trigger .tb-select-value {
+  overflow: clip;
+  overflow-clip-margin: 0.35em;
+}
+.tb-app-icon {
+  font-style: normal;
+}
