@@ -126,6 +126,6 @@ test("0.2.2: clerk.css ships (unlayered Clerk fixes on tokens only)", { skip: di
   const css = readFileSync(join(root, "dist/clerk.css"), "utf8");
   assert.match(css, /\.cl-formFieldInput/);
   assert.match(css, /\.cl-formButtonPrimary/);
-  assert.doesNotMatch(css, /@layer/);
+  assert.doesNotMatch(css.replace(/\/\*[\s\S]*?\*\//g, ""), /@layer/); // unlayered, so it wins over Clerk's layer
   assert.equal((pkg.exports as Record<string, unknown>)["./clerk.css"], "./dist/clerk.css");
 });
