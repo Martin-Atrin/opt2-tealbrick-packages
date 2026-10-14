@@ -8,6 +8,16 @@
 /* ------------------------------------------------------------------ base */
 :where(.tb-root) :where(h1, h2, h3, h4, p, ul, ol, dl, dd, figure, fieldset) { margin: 0; }
 :where(.tb-root) :where(ul, ol) { padding: 0; list-style: none; }
+/* Prose keeps its list markers (backlog §11): the reset above is for UI lists (rows, steps, menus). Reading text —
+   help, consent, legal, Knowledge documents, change lists — opts in with .tb-prose, or one list with .tb-list.
+   Markers are teal-ink, as in the redesign's notes ("teal-marker lists"). */
+.tb-prose :where(ul, ol), :where(.tb-root) :is(ul.tb-list, ol.tb-list) { padding-left: 1.5em; }
+.tb-prose :where(ul), :where(.tb-root) ul.tb-list { list-style: disc; }
+.tb-prose :where(ol), :where(.tb-root) ol.tb-list { list-style: decimal; }
+.tb-prose :where(ul ul) { list-style: circle; }
+.tb-prose :where(li) + :where(li), :is(ul.tb-list, ol.tb-list) > li + li { margin-top: 4px; }
+.tb-prose :where(li)::marker, :is(ul.tb-list, ol.tb-list) > li::marker { color: var(--tb-teal-ink); font-weight: var(--tb-weight-label); }
+.tb-prose :where(p + p, p + ul, p + ol, ul + p, ol + p) { margin-top: var(--tb-s3); }
 :where(.tb-root) :where(fieldset) { border: 0; padding: 0; min-width: 0; }
 .tb-root h1, .tb-root h2, .tb-root h3 { font-weight: var(--tb-weight-head); letter-spacing: var(--tb-tracking-head); text-wrap: balance; }
 .tb-root h1 { font-size: var(--tb-text-h1); line-height: 1; }
@@ -119,7 +129,7 @@
 .tb-select-trigger:focus-visible, .tb-select-trigger.is-focus { outline: var(--tb-focus-width) solid var(--tb-focus); outline-offset: var(--tb-focus-offset-tight); }
 .tb-select-trigger[aria-expanded="true"] { box-shadow: inset 0 0 0 2px var(--tb-ink); }
 .tb-select-trigger:disabled { background: var(--tb-disabled-fill); color: var(--tb-disabled-on); box-shadow: none; cursor: not-allowed; }
-.tb-select-value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tb-select-value { text-overflow: ellipsis; white-space: nowrap; } /* no overflow: hidden here: it would undo the clip + margin above and cut descenders */
 .tb-select-value.is-placeholder { color: var(--tb-field-placeholder); }
 .tb-chevron { flex: none; width: 9px; height: 9px; margin-top: -4px; border-right: 2.5px solid currentColor; border-bottom: 2.5px solid currentColor; transform: rotate(45deg); transition: transform var(--tb-dur) var(--tb-ease), margin var(--tb-dur) var(--tb-ease); }
 .tb-select-trigger[aria-expanded="true"] .tb-chevron { margin-top: 4px; transform: rotate(-135deg); }
@@ -131,7 +141,7 @@
 .tb-option:hover, .tb-option.is-active { background: var(--tb-option-hover-fill); color: var(--tb-option-hover-on); }
 .tb-option.is-active { outline: 2px solid var(--tb-focus); outline-offset: -2px; } /* keyboard position */
 .tb-option[aria-selected="true"] { background: var(--tb-option-selected-fill); color: var(--tb-option-selected-on); font-weight: var(--tb-weight-label); }
-.tb-option[aria-selected="true"]::before { visibility: visible; }
+.tb-option[aria-selected="true"]::before { visibility: visible; color: var(--tb-teal-ink); } /* the check mark carries the teal */
 .tb-option[aria-selected="true"]:hover, .tb-option[aria-selected="true"].is-active { background: var(--tb-option-selected-hover-fill); color: var(--tb-option-selected-hover-on); }
 .tb-option[aria-selected="true"] small, .tb-option[aria-selected="true"]:hover small { color: inherit; }
 .tb-option[aria-disabled="true"] { background: var(--tb-option-fill); color: var(--tb-option-disabled-on); cursor: not-allowed; }

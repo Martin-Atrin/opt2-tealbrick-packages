@@ -1,6 +1,6 @@
 /* Kit gallery: every @opt2-tealbrick/ui export in its states, rendered from the BUILT package (dist), so the rendered
    checks (scripts/check-rendered.ts: contrast in every state, scrollbars, ink centring) test what consumers install.
-   Views: ?view=components (default) | shell-app[&app=<id>] | shell | dialog | stepflow[&step=N] | toast */
+   Views: ?view=components (default) | shell-app[&app=<id>] | shell | dialog | stepflow[&step=N] | toast | reading */
 import { type ReactNode, StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -540,7 +540,66 @@ function ToastView() {
   );
 }
 
+function ReadingView() {
+  // 0.2.3 specimens: the tinted panel with controls inside (ink at 1280/1440: no half-pixel padding), prose lists
+  // (.tb-prose / .tb-list keep their markers; the UI-list reset stays), a narrow Select whose options never wrap.
+  const [tpl, setTpl] = useState("weekly");
+  return (
+    <>
+      <PortalHeader />
+      <main className="page tb-stack">
+        <Panel data-gallery="tint">
+          <Kicker>Tinted panel</Kicker>
+          <p>Controls inside sit on whole pixels at every width.</p>
+          <div className="tb-ctas">
+            <Button variant="primary">Approve</Button>
+            <Button>Deny</Button>
+          </div>
+        </Panel>
+        <div style={{ display: "flex", gap: 12, alignItems: "end" }}>
+          <div style={{ width: 120 }}>
+            <Field label="Template">
+              <Select
+                value={tpl}
+                onValueChange={setTpl}
+                options={[
+                  { value: "weekly", label: "Template: Weekly report for the whole workspace" },
+                  { value: "daily", label: "Daily digest", meta: "08:00" },
+                ]}
+              />
+            </Field>
+          </div>
+        </div>
+        <div className="tb-prose" data-gallery="prose">
+          <p>What changed in this version:</p>
+          <ul>
+            <li>Agents keep their names.</li>
+            <li>
+              Holds wait for a person.
+              <ul>
+                <li>Deny tells the agent why.</li>
+              </ul>
+            </li>
+          </ul>
+          <ol>
+            <li>Open the app.</li>
+            <li>Approve the hold.</li>
+          </ol>
+        </div>
+        <ul className="tb-list" data-gallery="list">
+          <li>One list outside prose keeps its markers.</li>
+          <li>Second item.</li>
+        </ul>
+        <ul data-gallery="ui-list">
+          <li>UI lists stay unmarked.</li>
+        </ul>
+      </main>
+    </>
+  );
+}
+
 function App() {
+  if (view === "reading") return <ReadingView />;
   if (view === "stepflow") return <StepFlowView />;
   if (view === "dialog") return <DialogView />;
   if (view === "shell-app") return <ShellView coloured />;

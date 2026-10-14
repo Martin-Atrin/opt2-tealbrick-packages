@@ -37,6 +37,7 @@ const base = `http://127.0.0.1:${(server.address() as { port: number }).port}/`;
 const pages: [string, number, number[]?][] = [ // [gallery view (query), StepFlow steps (0 = none), widths]
   ['index.html', 0], ['index.html?view=shell-app&app=inbox', 0], ['index.html?view=shell-app&app=knowledge', 0], ['index.html?view=shell-app&app=connect', 0],
   ['index.html?view=shell', 0], ['index.html?view=dialog', 0], ['index.html?view=toast', 0], ['index.html?view=stepflow', 4],
+  ['index.html?view=reading', 0, [1280, 1440, 375]], // 0.2.3: tinted panel with controls, prose lists, narrow Select
 ];
 
 /* runs in the page: composited contrast of text and outlines inside `scope` */
@@ -329,6 +330,56 @@ for (const f of descFails) console.error(`DESCENDER ${f.page} ${f.width}@${f.dpr
 console.log(`descenders: ${descRows.length} Select values with g/j/p/q/y measured, ${descFails.length} clipped`);
 if (!descRows.length) { console.error('descenders: no Select value with a descender found on the gallery (the check would be blind)'); process.exit(1); }
 
+/* ---------------------------------------------------------------- LAYOUT test (0.2.3, kit backlog §11)
+   On the reading view at 1280, 1440 and 375: the tinted panel's padding is a whole, even pixel count (C128 even split);
+   prose lists and .tb-list show markers in teal-ink while a plain UI list under .tb-root stays unmarked; the narrow
+   Select keeps >= 160px and its option labels do not wrap. Self-test (L34): fires on a 38.4px panel and a wrapped option. */
+const layoutCheck = () => {
+  const bad: string[] = [];
+  const teal = getComputedStyle(document.documentElement).getPropertyValue('--tb-teal-ink').trim();
+  const probe = document.createElement('i'); probe.style.color = teal; document.body.append(probe);
+  const tealRgb = getComputedStyle(probe).color; probe.remove();
+  for (const el of document.querySelectorAll<HTMLElement>('.tb-panel-tint')) {
+    for (const side of ['paddingTop', 'paddingLeft'] as const) {
+      const v = parseFloat(getComputedStyle(el)[side]);
+      if (!Number.isInteger(v) || v % 2) bad.push(`panel ${side} ${v}px (not a whole even pixel)`);
+    }
+  }
+  const lists: [string, string][] = [['[data-gallery="prose"] > ul', 'disc'], ['[data-gallery="prose"] > ol', 'decimal'], ['[data-gallery="prose"] ul ul', 'circle'], ['[data-gallery="list"]', 'disc'], ['[data-gallery="ui-list"]', 'none']];
+  for (const [sel, want] of lists) {
+    const el = document.querySelector(sel); if (!el) { bad.push(`${sel} missing`); continue; }
+    const got = getComputedStyle(el).listStyleType; if (got !== want) bad.push(`${sel} list-style ${got} (want ${want})`);
+    const li = el.querySelector('li');
+    if (want !== 'none' && li && getComputedStyle(li, '::marker').color !== tealRgb) bad.push(`${sel} marker ${getComputedStyle(li, '::marker').color} (want teal-ink ${tealRgb})`);
+  }
+  for (const sel of document.querySelectorAll<HTMLElement>('.tb-select')) {
+    const r = sel.getBoundingClientRect(); if (r.width > 0 && r.width < 160) bad.push(`select ${r.width}px wide (< 160)`);
+    const v = sel.querySelector('.tb-select-value')?.getBoundingClientRect(), ch = sel.querySelector('.tb-chevron')?.getBoundingClientRect();
+    if (v && ch && r.width > 0 && (v.right > ch.left || ch.right > r.right)) bad.push(`select value runs over the chevron or out of the trigger`);
+  }
+  for (const ink of document.querySelectorAll<HTMLElement>('.tb-option > .tb-ink')) {
+    if (getComputedStyle(ink).whiteSpace !== 'nowrap') bad.push(`option "${ink.textContent?.slice(0, 20)}" may wrap`);
+  }
+  return bad;
+};
+const layoutFails: string[] = [];
+{
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } }); const page = await ctx.newPage();
+  await page.goto(base + 'index.html?view=reading'); await page.waitForSelector('[data-gallery="prose"]');
+  await page.addStyleTag({ content: '.tb-panel-tint{padding:38.4px!important}.tb-option>.tb-ink{white-space:normal!important}.tb-select-trigger>.tb-select-value{min-width:auto!important}' });
+  const bad = await page.evaluate(layoutCheck);
+  await ctx.close();
+  if (!bad.some(b => b.startsWith('panel')) || !bad.some(b => b.includes('may wrap')) || !bad.some(b => b.includes('runs over'))) { console.error('layout: SELF-TEST FAILED (does not fire on a bad panel / wrapping option / overflowing value)', bad); process.exit(2); }
+  if (!ONLY || ONLY.includes('reading')) for (const width of [1280, 1440, 375]) {
+    const c2 = await browser.newContext({ viewport: { width, height: 800 } }); const p2 = await c2.newPage();
+    await p2.goto(base + 'index.html?view=reading'); await p2.waitForSelector('[data-gallery="prose"]');
+    for (const b of await p2.evaluate(layoutCheck)) layoutFails.push(`${width}: ${b}`);
+    await c2.close();
+  }
+}
+for (const f of layoutFails) console.error(`LAYOUT ${f}`);
+console.log(`layout: tinted panel padding, prose/list markers, Select width and option wrap at 1280/1440/375: ${layoutFails.length} failures (self-test ok)`);
+
 const inkFails = inkRows.filter(r => Math.abs(r.diff) > .5);
 const byControl = new Map<string, number[]>();
 for (const r of inkRows) { const k = r.control.replace(/\.(primary|quiet|danger|confirm|lg|sm|block|live|busy|needs-you|idle|open|ink|code|tb-ink|hide-phone|only-phone|tb-next|hide-wide)\b/g, '').replace(/\.$/, ''); byControl.set(k, [...(byControl.get(k) ?? []), r.diff]); }
@@ -345,4 +396,4 @@ const uniq = [...new Map(report.map(r => [`${r.page}|${r.width}|${r.theme}|${r.w
 if (!inkOnly) writeFileSync(join(out, 'contrast-report.json'), JSON.stringify({ when: new Date().toISOString(), pagesRendered: pages.length, screenshots: shots, pairsChecked: checked, failures: uniq }, null, 2));
 for (const f of uniq) console.error(`FAIL ${f.page} ${f.width} ${f.theme} [${f.state}] ${f.what} ${f.ratio} < ${f.need}: ${f.where}`);
 if (!inkOnly) console.log(`screens: ${shots} screenshots, ${checked} rendered pairs checked (text + outlines, default/hover/focus/open), ${uniq.length} failures`);
-process.exit(uniq.length || inkFails.length || descFails.length ? 1 : 0);
+process.exit(uniq.length || inkFails.length || descFails.length || layoutFails.length ? 1 : 0);

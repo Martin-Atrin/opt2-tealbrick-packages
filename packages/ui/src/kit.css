@@ -200,3 +200,31 @@ button.tb-choice {
   color: inherit;
   text-align: left;
 }
+
+/* ------------------------------------------------------------------ 0.2.3 fixes (kit backlog, DESIGN-SYSTEM §11, C156a)
+   Select: the trigger never shrinks below a readable width, and an option label never wraps (a wrapped label put the
+   ink off-centre in Evolving Workflows 0.2.8). Long labels end in an ellipsis; the clip margin keeps descenders. */
+.tb-select {
+  min-width: 160px;
+}
+/* the value shrinks inside the trigger (flex item), so a long value ends in an ellipsis instead of running out */
+.tb-select-trigger > .tb-select-value {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.tb-option > .tb-ink {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: clip;
+  overflow-clip-margin: 0.35em;
+  text-overflow: ellipsis;
+}
+.tb-option > small {
+  flex: none;
+  white-space: nowrap;
+}
+/* Tinted panel: 3vw is 38.4px at 1280px, which puts every control inside on a half pixel (C128 even split).
+   Rounded to 2px like the line heights; a browser without round() keeps the components.css value. */
+.tb-panel-tint {
+  padding: round(nearest, clamp(24px, 3vw, 40px), 2px);
+}

@@ -47,3 +47,11 @@
 .tb-root .cl-headerSubtitle {
   font-size: var(--tb-text-label);
 }
+/* 0.2.3: Clerk paints a white gradient over the primary button (::after); our primary is flat */
+.cl-formButtonPrimary::after {
+  background-image: none;
+}
+/* UserProfile's card has a fixed width; inside a narrower column it must not run out of the page */
+.cl-cardBox {
+  max-width: 100%;
+}
