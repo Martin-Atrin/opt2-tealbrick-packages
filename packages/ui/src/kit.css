@@ -155,6 +155,7 @@ dialog.tb-dialog.tb-stepflow {
 /* ------------------------------------------------------------------ copy block: the copy button inside .tb-copy */
 .tb-copy > .tb-btn {
   flex: none;
+  font-family: var(--tb-font); /* .tb-copy sets the mono face; the button label stays Nunito (ink centring) */
 }
 .tb-copy > code {
   user-select: all;
