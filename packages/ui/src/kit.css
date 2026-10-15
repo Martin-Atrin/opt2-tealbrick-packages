@@ -203,9 +203,11 @@ button.tb-choice {
 
 /* ------------------------------------------------------------------ 0.2.3 fixes (kit backlog, DESIGN-SYSTEM §11, C156a)
    Select: the trigger never shrinks below a readable width, and an option label never wraps (a wrapped label put the
-   ink off-centre in Evolving Workflows 0.2.8). Long labels end in an ellipsis; the clip margin keeps descenders. */
+   ink off-centre in Evolving Workflows 0.2.8). Long labels end in an ellipsis; the clip margin keeps descenders.
+   0.2.4: min(160px, 100%), so a Select in a narrower column (the Portal's 96px "per hour/day" cell) fills that column
+   instead of running out of it (0.2.3's fixed 160px made the agent panel scroll sideways). */
 .tb-select {
-  min-width: 160px;
+  min-width: min(160px, 100%);
 }
 /* the value shrinks inside the trigger (flex item), so a long value ends in an ellipsis instead of running out */
 .tb-select-trigger > .tb-select-value {

@@ -353,7 +353,10 @@ const layoutCheck = () => {
     if (want !== 'none' && li && getComputedStyle(li, '::marker').color !== tealRgb) bad.push(`${sel} marker ${getComputedStyle(li, '::marker').color} (want teal-ink ${tealRgb})`);
   }
   for (const sel of document.querySelectorAll<HTMLElement>('.tb-select')) {
-    const r = sel.getBoundingClientRect(); if (r.width > 0 && r.width < 160) bad.push(`select ${r.width}px wide (< 160)`);
+    const r = sel.getBoundingClientRect(), col = sel.parentElement!.getBoundingClientRect();
+    const inGrid = getComputedStyle(sel.parentElement!).display.includes('grid'); // a grid track is not an element: only the run-out check applies
+    if (!inGrid && r.width > 0 && r.width < Math.min(160, col.width) - 0.5) bad.push(`select ${r.width}px wide (< min(160, column ${col.width}))`);
+    if (r.width > 0 && r.right > col.right + 0.5) bad.push(`select runs out of its ${col.width}px column (${r.width}px)`);
     const v = sel.querySelector('.tb-select-value')?.getBoundingClientRect(), ch = sel.querySelector('.tb-chevron')?.getBoundingClientRect();
     if (v && ch && r.width > 0 && (v.right > ch.left || ch.right > r.right)) bad.push(`select value runs over the chevron or out of the trigger`);
   }
@@ -366,10 +369,10 @@ const layoutFails: string[] = [];
 {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } }); const page = await ctx.newPage();
   await page.goto(base + 'index.html?view=reading'); await page.waitForSelector('[data-gallery="prose"]');
-  await page.addStyleTag({ content: '.tb-panel-tint{padding:38.4px!important}.tb-option>.tb-ink{white-space:normal!important}.tb-select-trigger>.tb-select-value{min-width:auto!important}' });
+  await page.addStyleTag({ content: '.tb-panel-tint{padding:38.4px!important}.tb-option>.tb-ink{white-space:normal!important}.tb-select-trigger>.tb-select-value{min-width:auto!important}.tb-select{min-width:160px!important}' });
   const bad = await page.evaluate(layoutCheck);
   await ctx.close();
-  if (!bad.some(b => b.startsWith('panel')) || !bad.some(b => b.includes('may wrap')) || !bad.some(b => b.includes('runs over'))) { console.error('layout: SELF-TEST FAILED (does not fire on a bad panel / wrapping option / overflowing value)', bad); process.exit(2); }
+  if (!bad.some(b => b.startsWith('panel')) || !bad.some(b => b.includes('may wrap')) || !bad.some(b => b.includes('runs over')) || !bad.some(b => b.includes('runs out of its'))) { console.error('layout: SELF-TEST FAILED (does not fire on a bad panel / wrapping option / overflowing value / Select wider than its column)', bad); process.exit(2); }
   if (!ONLY || ONLY.includes('reading')) for (const width of [1280, 1440, 375]) {
     const c2 = await browser.newContext({ viewport: { width, height: 800 } }); const p2 = await c2.newPage();
     await p2.goto(base + 'index.html?view=reading'); await p2.waitForSelector('[data-gallery="prose"]');
@@ -378,7 +381,7 @@ const layoutFails: string[] = [];
   }
 }
 for (const f of layoutFails) console.error(`LAYOUT ${f}`);
-console.log(`layout: tinted panel padding, prose/list markers, Select width and option wrap at 1280/1440/375: ${layoutFails.length} failures (self-test ok)`);
+console.log(`layout: tinted panel padding, prose/list markers, Select width, column fit and option wrap at 1280/1440/375: ${layoutFails.length} failures (self-test ok)`);
 
 const inkFails = inkRows.filter(r => Math.abs(r.diff) > .5);
 const byControl = new Map<string, number[]>();
