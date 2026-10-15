@@ -1,5 +1,11 @@
 # @opt2-tealbrick/ui changelog
 
+## 0.2.4 (2026-10-15)
+
+Fix for 0.2.3. No API change.
+- Select: `min-width: min(160px, 100%)` instead of a fixed 160px. In a narrower column (the Portal agent panel's 96px "per hour/day" cell) the Select fills the column instead of running out of it; 0.2.3 made that panel scroll sideways by 40px (found by the final rendered run, ink check on the shifted inputs). Option labels still never wrap.
+- Rendered check: the reading view has a 96px Select column; the layout test fails when a Select is wider than its column (self-test: fires on a fixed 160px).
+
 ## 0.2.3 (2026-10-14)
 
 Kit backlog (DESIGN-SYSTEM §11, C156a, C161). No API change.

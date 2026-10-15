@@ -544,6 +544,7 @@ function ReadingView() {
   // 0.2.3 specimens: the tinted panel with controls inside (ink at 1280/1440: no half-pixel padding), prose lists
   // (.tb-prose / .tb-list keep their markers; the UI-list reset stays), a narrow Select whose options never wrap.
   const [tpl, setTpl] = useState("weekly");
+  const [per, setPer] = useState("hour");
   return (
     <>
       <PortalHeader />
@@ -569,6 +570,18 @@ function ReadingView() {
               />
             </Field>
           </div>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 96px", gap: 8, maxWidth: 320 }} data-gallery="narrow-col">
+          <TextInput aria-label="Calls" defaultValue="500" />
+          <Select
+            aria-label="Per"
+            value={per}
+            onValueChange={setPer}
+            options={[
+              { value: "hour", label: "hour" },
+              { value: "day", label: "day" },
+            ]}
+          />
         </div>
         <div className="tb-prose" data-gallery="prose">
           <p>What changed in this version:</p>

@@ -133,7 +133,7 @@ test("0.2.2: clerk.css ships (unlayered Clerk fixes on tokens only)", { skip: di
 test("0.2.3: Select min-width + non-wrapping options, even tinted-panel padding, prose lists, Clerk primary flat", { skip: distSkip }, () => {
   const comps = readFileSync(join(root, "dist/components.css"), "utf8");
   const after = (sel: string) => comps.slice(comps.lastIndexOf(sel));
-  assert.match(after(".tb-select {"), /min-width: 160px/);
+  assert.match(after(".tb-select {"), /min-width: min\(160px, 100%\)/); // 0.2.4: never wider than its column
   assert.match(after(".tb-option > .tb-ink {"), /white-space: nowrap;[\s\S]*overflow-clip-margin: 0\.35em;/);
   assert.match(after(".tb-panel-tint {"), /padding: round\(nearest, clamp\(24px, 3vw, 40px\), 2px\)/);
   assert.match(comps, /\.tb-prose :where\(ul\), :where\(\.tb-root\) ul\.tb-list \{ list-style: disc; \}/);
