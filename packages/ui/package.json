@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Tealbrick design system: tokens, self-hosted Nunito, React components and the check-system guard (brick 6px / pill, C125/C126/C128).",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -32,7 +32,8 @@
     "dist",
     "assets",
     "CHANGELOG.md",
-    "README.md"
+    "README.md",
+    "NOTICE"
   ],
   "scripts": {
     "build": "node scripts/build.ts",
