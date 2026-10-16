@@ -1,6 +1,6 @@
 # Tealbrick shared packages (UI kit): architecture
 
-State: verified against the repo on 2026-10-16. Claims cite paths in this repo. Anything not verified is marked UNVERIFIED. For the whole system see the system `ARCHITECTURE.md` and `SYSTEM-OVERVIEW.md`.
+State: verified against the repo on 2026-10-17. Claims cite paths in this repo. Anything not verified is marked UNVERIFIED. For the whole system see `engineering/ARCHITECTURE.md` and `engineering/SYSTEM-OVERVIEW.md` in the private repo `Tealbrick/opt2-tealbrick-docs`.
 
 ## 1. Shape rules (C125, C126)
 
@@ -22,7 +22,7 @@ Fails with exit 1 on raw colours (hex, rgb, hsl), foreign fonts or font imports,
 
 ## 5. Rendered checks (CI `rendered.yaml`)
 
-Chromium (Playwright image, no secrets, nothing published): contrast in default, hover, focus and open states; scrollbar thumbs; ink centring at DPR 1 and 2; light and dark; 1280 and 375 wide. The gate is zero failures. Controls must centre their ink within 0.5 px (C172).
+Chromium (Playwright image, no secrets, nothing published): contrast in default, hover, focus and open states; scrollbar thumbs; ink centring at DPR 1 and 2; light and dark; 1280 and 375 wide (the reading view also at 1440). It also runs a descender test for Select values and a static layout test (tinted panel padding, list markers, Select width, column fit, option wrap). It measures no layout shift. The gate is zero failures. Controls must centre their ink within 0.5 px (C172).
 
 ## 6. Consumers and pins
 
@@ -31,5 +31,4 @@ ui 0.2.4: admin, connect, evolution, fleet, inbox, kanban, knowledge, rules, por
 ## 7. Known gaps
 
 - `src/apps.ts` is an interim product-id lookup for app names, colours and art. It conflicts with "no product id in code" and waits for manifest `display.color` and `ui.art` (spec request MDC-1).
-- No root `LICENSE`.
-- `.docs-session/context.json` (docs tool state) sits in the repo directory; check that it is not tracked.
+- No root `LICENSE` and no `LICENSE` in `packages/ui`; `package.json` declares MIT while decision C191 sets the Tealbrick SDK Licence (see README).
