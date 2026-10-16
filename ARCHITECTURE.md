@@ -31,4 +31,4 @@ ui 0.2.4: admin, connect, evolution, fleet, inbox, kanban, knowledge, rules, por
 ## 7. Known gaps
 
 - `src/apps.ts` is an interim product-id lookup for app names, colours and art. It conflicts with "no product id in code" and waits for manifest `display.color` and `ui.art` (spec request MDC-1).
-- No root `LICENSE` and no `LICENSE` in `packages/ui`; `package.json` declares MIT while decision C191 sets the Tealbrick SDK Licence (see README).
+- Licence: root `LICENSE` and `packages/ui/LICENSE` (Tealbrick Software Licence), `NOTICE`, and `"license": "SEE LICENSE IN LICENSE"`; versions released earlier stay MIT (see `LICENSING.md`).

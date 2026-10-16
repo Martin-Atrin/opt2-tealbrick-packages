@@ -43,4 +43,4 @@ From the repo root:
 
 ## Licences
 
-The code is MIT. Nunito is under the SIL Open Font License 1.1 (`dist/fonts/OFL.txt`). The brand mark and the app art are Tealbrick's own artwork from production (`assets/brand/PROVENANCE.md`, `src/apps.ts`). They are not under the MIT licence.
+The code is under the Tealbrick Software Licence (`LICENSE`; versions up to 0.2.4 were released under MIT and stay MIT, see the repo `LICENSING.md`). Nunito is under the SIL Open Font License 1.1 (`dist/fonts/OFL.txt`). The brand mark and the app art are Tealbrick's own artwork from production (`assets/brand/PROVENANCE.md`, `src/apps.ts`). The licence grants no right to them or to the Tealbrick trademark.
