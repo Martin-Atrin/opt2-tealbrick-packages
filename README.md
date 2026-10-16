@@ -1,33 +1,66 @@
-# opt2-tealbrick-packages
+# Tealbrick shared packages (UI kit)
 
-Tealbrick opt2: shared packages (the ui design system).
+Shared packages. Today only `@opt2-tealbrick/ui` (`packages/ui`): design tokens, self-hosted Nunito, React components, the `check-system` design guard and the Clerk appearance, used by the Portal GUI, Admin, the website, every mini app and TBD. See `packages/ui/README.md` and `packages/ui/CHANGELOG.md`.
 
-**Status: opt2 build (clean-room v2 of Teal Brick), work in progress.** This repository is part of the opt2 build and lives under `Martin-Atrin` during the build; it moves to the Teal Brick organisation as one clean commit when opt2 is released. It is not the current production system.
+- Repository: `Tealbrick/opt2-tealbrick-packages` (GitHub organisation `Tealbrick`)
+- Visibility target: PRIVATE. The repo is PUBLIC for now (the flip is held for the org Actions billing). Consumers install from the dist host (`distBaseUrl`, `Tealbrick/opt2-tealbrick-dist`).
+- Licence: the package says MIT, but the repo has no root `LICENSE` file. The brand mark and app stills are Tealbrick artwork and are NOT MIT. The target is the Tealbrick SDK licence. Fix the licence files before the repo goes private.
+- Status: ui 0.2.4. CI template ci-v9.9. Pull-request based flow (`ui-0.2.x` branches). `tealbrick-ci.json` has `distBaseUrl`, so the ui tarball is mirrored on the dist host.
 
-Owner lane: Lane A · UI build (ui).
+Do not put secrets, tokens, keys, customer data or personal data in this repository, its issues or its pull requests. This repository is public for now and must stay clean either way: no API keys, tokens, passwords, private keys, `.env` files, connection strings, personal names, private agent configurations or customer data. Every CI run starts with a secret scan (gitleaks, a step in `.woodpecker/ci.yaml`). GitHub secret scanning with push protection is enabled. An optional local guard is `pre-commit install`. If a secret is committed, rotate it first, then remove it from history.
 
-## No secrets policy
+## What this repo is and is not
 
-This repository is public. It must never contain secrets or personal data:
+One design system, one package: same fonts, colours, radii and components on every surface. 0.2.0 broke 0.1.x with no aliases.
 
-- No API keys, tokens, passwords, private keys, deployment secrets, `.env` files or connection strings. Use `.env.example` with placeholder values only.
-- Runtime secrets live in the deployment platform (Railway variables, Woodpecker secrets) and are copied between services without printing them.
-- No personal names, private agent configurations or customer data.
-- Every push runs a secret scan (`.woodpecker/secret-scan.yaml`, gitleaks). GitHub secret scanning with push protection is enabled. Optional local guard: `pre-commit install`.
-- If a secret is committed anyway: rotate it first, then remove it from history.
+`@opt2-tealbrick/buzz` and `@opt2-tealbrick/avm` do not exist in this repo (the code of Buzz stays inside Connect; avm is deferred).
 
-## CI
+## Quick start
 
-Woodpecker CI (shared opt2 pipeline template from `opt2-tealbrick-platform`).
+pnpm workspace, TypeScript run directly by Node 24+ (type stripping).
+
+```sh
+corepack enable && pnpm install --frozen-lockfile --ignore-scripts
+pnpm typecheck && pnpm lint && pnpm test
+pnpm --filter @opt2-tealbrick/ui check:rendered   # builds the gallery, runs Chromium checks
+```
+
+Use it in an app: `import "@opt2-tealbrick/ui/tokens.css"`, `components.css`, then components from `@opt2-tealbrick/ui`. Run `check-system src` in the consumer. Install by release URL from the dist host plus lockfile integrity (never npm):
+
+```json
+"@opt2-tealbrick/ui": "https://github.com/Tealbrick/opt2-tealbrick-dist/releases/download/opt2-tealbrick-packages-ui-v<x>/opt2-tealbrick-ui-<x>.tgz"
+```
+
+## Layout
+
+| Path | Purpose |
+|---|---|
+| `packages/ui/src/components/` | Button, dialog, field, select, nav, pills, shell (AppShell), stepflow, surfaces, identity (BrandMark, AppIcon), ink |
+| `packages/ui/src/tokens.css`, `components.css`, `kit.css`, `clerk.css`, `fonts.css` | Tokens and styles. `tokens.css` and `components.css` are synced unchanged from the approved design source (hashes in `DESIGN-SOURCE.json`) |
+| `packages/ui/src/tokens.ts`, `clerk-appearance.ts` | Generated tokens and Clerk appearance |
+| `packages/ui/src/bin/check-system.ts` | The design guard |
+| `packages/ui/assets/` | App stills and brand files (with `PROVENANCE.md`) |
+| `packages/ui/gallery/`, `packages/ui/scripts/` | Component gallery and the build, contrast and rendered checks |
+| `.woodpecker/rendered.yaml` | Rendered checks pipeline (Chromium, no secrets, nothing published) |
+| `tealbrick-ci.json` | Repo-specific CI settings (kind `library`, `distBaseUrl`) |
+
+## Configuration
+
+None at runtime. Peer dependency `react >= 19`.
+
+## CI and release
+
+Woodpecker CI with the shared opt2 pipeline template ci-v9.9 (`.woodpecker/ci.yaml` and `.github/workflows/opt2-release.yml` are generated copies; do not edit them, change `tealbrick-ci.json` or the template in `Tealbrick/opt2-tealbrick-platform`). `.woodpecker/rendered.yaml` runs the rendered checks.
+
+Tag `ui-v<x>` on a green `main`. The release Action attaches `opt2-tealbrick-ui-<x>.tgz`, `.sha256`, `.integrity`. Never npm.
 
 ## Language
 
-New code is TypeScript (Node 24+). Swift only where the macOS app requires it.
+New code is TypeScript (Node 24+).
 
-## Packages
+## Documentation
 
-| Package | Owner lane | What |
-|---|---|---|
-| `@opt2-tealbrick/ui` (`packages/ui`) | UI build | Tealbrick design system: tokens, self-hosted Nunito, React components, the `check-system` guard. See `packages/ui/README.md` and `CHANGELOG.md`. |
-
-Release: tag `ui-v<version>` on a green main; the GitHub Actions release workflow (template ci-v9.5, C72/C76) builds and attaches the tarball + `.sha256` + `.integrity`. `.woodpecker/rendered.yaml` runs the rendered checks.
+- `ARCHITECTURE.md` explains the design.
+- `CONTRIBUTING.md` explains how to change it.
+- `packages/ui/CHANGELOG.md` lists the ui releases.
+- System documentation (overview, environments, runbooks) lives in the private repo Tealbrick/opt2-tealbrick-docs.
