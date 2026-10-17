@@ -1,4 +1,4 @@
-import { type CSSProperties, type HTMLAttributes, type ReactNode, useEffect, useRef, useState } from "react";
+import { type CSSProperties, type HTMLAttributes, type ReactNode, type Ref, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { cx, Ink } from "./ink.tsx";
 
 export type Group = "memory" | "coordination" | "control" | "connections" | "creation";
@@ -89,9 +89,66 @@ export function EmptyState({ title, children, action, className }: { title: Reac
   );
 }
 
-/** Ledger table: muted 800 heads over an ink rule, hairline rows, last column right-aligned. */
-export function Table({ className, ...rest }: HTMLAttributes<HTMLTableElement>) {
-  return <table className={cx("tb-table", className)} {...rest} />;
+const AUTO_LABEL = "data-tb-auto-label";
+
+/** Copies the head cell text to `data-label` on the body cells of the same column (colspan counted), so the narrow
+    layout (kit.css, <= 480px) can print "Label  value" lines. A head cell's own `data-label` wins over its text; a body
+    cell with its own `data-label` (not set by us) is left alone. */
+function labelCells(table: HTMLTableElement): void {
+  const span = (c: Element) => Math.max(1, Number.parseInt(c.getAttribute("colspan") ?? "1", 10) || 1);
+  const headRows = table.querySelectorAll(":scope > thead > tr");
+  const headRow = headRows[headRows.length - 1];
+  if (!headRow) return;
+  const labels: string[] = [];
+  for (const th of Array.from(headRow.children)) {
+    const text = th.getAttribute("data-label") ?? (th.textContent ?? "").trim();
+    for (let i = 0; i < span(th); i++) labels.push(text);
+  }
+  for (const row of Array.from(table.querySelectorAll(":scope > tbody > tr"))) {
+    let col = 0;
+    for (const cell of Array.from(row.children)) {
+      const label = labels[col] ?? "";
+      const own = cell.hasAttribute("data-label") && !cell.hasAttribute(AUTO_LABEL);
+      if (cell.tagName === "TD" && !own) {
+        if (label) {
+          if (cell.getAttribute("data-label") !== label) cell.setAttribute("data-label", label);
+          cell.setAttribute(AUTO_LABEL, "");
+        } else if (cell.hasAttribute(AUTO_LABEL)) {
+          cell.removeAttribute("data-label");
+          cell.removeAttribute(AUTO_LABEL);
+        }
+      }
+      col += span(cell);
+    }
+  }
+}
+
+/** Ledger table: muted 800 heads over an ink rule, hairline rows, last column right-aligned. At 480px and below every
+    row stacks into one entry (first cell = title, other cells = "Label  value"), so no column hides behind a sideways
+    scroll. The labels come from the head cells; no prop is needed. */
+export function Table({ className, ref, ...rest }: HTMLAttributes<HTMLTableElement> & { ref?: Ref<HTMLTableElement> }) {
+  const own = useRef<HTMLTableElement | null>(null);
+  useLayoutEffect(() => {
+    const t = own.current;
+    if (!t) return;
+    labelCells(t);
+    // rows added by a child component's own state change do not re-render <Table>: watch the row list (not attributes)
+    if (typeof MutationObserver === "undefined") return;
+    const mo = new MutationObserver(() => labelCells(t));
+    mo.observe(t, { childList: true, subtree: true });
+    return () => mo.disconnect();
+  });
+  return (
+    <table
+      className={cx("tb-table", className)}
+      ref={(el) => {
+        own.current = el;
+        if (typeof ref === "function") return ref(el);
+        if (ref) ref.current = el;
+      }}
+      {...rest}
+    />
+  );
 }
 
 /** Thin 6px progress bar (in-row progress only, never the step indicator). No value = indeterminate. */

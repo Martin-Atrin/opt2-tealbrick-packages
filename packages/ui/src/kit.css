@@ -230,3 +230,63 @@ button.tb-choice {
 .tb-panel-tint {
   padding: round(nearest, clamp(24px, 3vw, 40px), 2px);
 }
+
+/* ------------------------------------------------------------------ 0.3.0 Table on a narrow screen (Live Artifacts S5)
+   At 375px the ledger table scrolled sideways (413px of content in a 333px box) and hid the Status column. At 480px
+   and below each row stacks into one ruled entry: the first cell is the row title, every other cell is a
+   "Label   value" line (the label is the column head, copied to data-label by <Table>). Ledger rules stay: an ink rule
+   above the list, a hairline under each row, no fills, no boxes. The head row stays in the DOM for assistive
+   technology and is visually hidden. */
+@media (max-width: 480px) {
+  .tb-table,
+  .tb-table tbody,
+  .tb-table tr {
+    display: block;
+  }
+  .tb-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .tb-table tr {
+    padding: var(--tb-s3) 0;
+    box-shadow: var(--tb-hair-bottom);
+  }
+  .tb-table tbody tr:first-child {
+    box-shadow: var(--tb-rule-top), var(--tb-hair-bottom);
+  }
+  .tb-table td,
+  .tb-table tbody th {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--tb-s4);
+    min-width: 0;
+    padding: var(--tb-s1) 0;
+    box-shadow: none;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+  .tb-table td::before {
+    content: attr(data-label);
+    flex: none;
+    max-width: 45%;
+    color: var(--tb-muted);
+    font-weight: var(--tb-weight-label);
+    text-align: left;
+    overflow-wrap: normal;
+  }
+  .tb-table td:not([data-label])::before,
+  .tb-table td:first-child::before {
+    display: none;
+  }
+  .tb-table td:first-child,
+  .tb-table tbody th:first-child {
+    justify-content: flex-start;
+    font-weight: var(--tb-weight-label);
+    text-align: left;
+  }
+}

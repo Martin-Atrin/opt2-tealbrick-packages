@@ -1,5 +1,13 @@
 # @opt2-tealbrick/ui changelog
 
+## 0.3.0 (2026-10-17)
+
+Found in Live Artifacts S5 (mini-apps lead). One breaking rename, with its migration note.
+- App art: the kit now ships stills for Observer (`observer-backfill`), Live Artifacts (`live-artifacts`) and Creative (`open-design`), 1x and 2x, byte copies of production like the other seven (10 apps in all). `appArt()`, `appName()` and `APPS` know the ids `observer`, `live-artifacts` and `creative`; an app without art showed the plate tile with its initial ("L"). `appColour()` now also resolves an app id from `APPS` (`appColour("live-artifacts")` is the artifacts colour), not only a colour id.
+- BREAKING (design source, synced): the header colour tokens `--tb-app-scribe` and `--tb-app-design` are now `--tb-app-observer` and `--tb-app-creative`, and `APP_COLOUR_IDS` lists `observer` and `creative` instead of `scribe` and `design`. Migration: `appColour("scribe")` becomes `appColour("observer")`, `appColour("design")` becomes `appColour("creative")`; a raw `var(--tb-app-scribe)` / `var(--tb-app-design)` in app CSS is renamed the same way. No opt2 app used the old names.
+- Table: at 480px and below every row stacks into one ruled entry (first cell = row title; other cells = "Label  value" lines, label = the column head). Before, the table scrolled sideways on a phone (413px of content in a 333px box at 375px) and hid the Status column. `<Table>` copies the head text to `data-label` on the body cells by itself (colspan counted, rows added later included); a body cell with its own `data-label`, or a head cell with `data-label`, overrides it. The head row stays in the DOM, visually hidden. At 481px and above nothing changes.
+- Rendered check: a Receipts-style table view at 1280 and 375, light and dark (contrast of every text, plus a layout test: no sideways scroll, every column and label on screen, label contrast AA, head row hidden/shown, ledger kept at 1280; self-test fires on an unstacked table). Unit tests for the labels.
+
 ## 0.2.4 (2026-10-15)
 
 Fix for 0.2.3. No API change.

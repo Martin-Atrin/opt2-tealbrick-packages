@@ -38,6 +38,7 @@ const pages: [string, number, number[]?][] = [ // [gallery view (query), StepFlo
   ['index.html', 0], ['index.html?view=shell-app&app=inbox', 0], ['index.html?view=shell-app&app=knowledge', 0], ['index.html?view=shell-app&app=connect', 0],
   ['index.html?view=shell', 0], ['index.html?view=dialog', 0], ['index.html?view=toast', 0], ['index.html?view=stepflow', 4],
   ['index.html?view=reading', 0, [1280, 1440, 375]], // 0.2.3: tinted panel with controls, prose lists, narrow Select
+  ['index.html?view=table', 0], // 0.3.0: Receipts-style ledger table (stacked at <= 480px)
 ];
 
 /* runs in the page: composited contrast of text and outlines inside `scope` */
@@ -383,6 +384,73 @@ const layoutFails: string[] = [];
 for (const f of layoutFails) console.error(`LAYOUT ${f}`);
 console.log(`layout: tinted panel padding, prose/list markers, Select width, column fit and option wrap at 1280/1440/375: ${layoutFails.length} failures (self-test ok)`);
 
+/* ---------------------------------------------------------------- TABLE test (0.3.0, Live Artifacts S5)
+   On the table view at 1280 and 375, light and dark: at <= 480px the table never scrolls sideways (no box and no page
+   overflow), every column is on screen (the Status tag included) with its head text as label, the head row is visually
+   hidden, rows are blocks, and the label text meets AA against the ground. At 1280 the table stays a ledger table (head
+   row shown, no labels, last column right-aligned). Self-test (L34): fires when the stacked rule is switched off at 375px. */
+const tableCheck = () => {
+  const bad: string[] = [];
+  const t = document.querySelector<HTMLElement>('[data-gallery="receipts"]'); if (!t) return ['receipts table missing'];
+  const narrow = window.innerWidth <= 480;
+  const tr = t.getBoundingClientRect(), box = (t.parentElement as HTMLElement).getBoundingClientRect();
+  const docW = document.documentElement.scrollWidth;
+  if (docW > window.innerWidth + 0.5) bad.push(`page scrolls sideways (${docW}px in ${window.innerWidth}px)`);
+  if (t.scrollWidth > t.clientWidth + 0.5 || tr.right > box.right + 0.5) bad.push(`table runs out of its box (content ${t.scrollWidth}px, box ${Math.round(box.width)}px)`);
+  const heads = [...t.querySelectorAll('thead th')].map(h => (h.textContent ?? '').trim());
+  const head = t.querySelector('thead')!.getBoundingClientRect();
+  const cv = document.createElement('canvas'); cv.width = cv.height = 1; const cx = cv.getContext('2d', { willReadFrequently: true })!;
+  const rgba = (c: string) => { cx.clearRect(0, 0, 1, 1); cx.fillStyle = '#000'; cx.fillStyle = c; cx.fillRect(0, 0, 1, 1); const d = cx.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
+  const lum = (c: number[]) => { const f = (v: number) => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }; return .2126 * f(c[0]) + .7152 * f(c[1]) + .0722 * f(c[2]); };
+  const ground = (el: Element) => { for (let e: Element | null = el; e; e = e.parentElement) { const c = rgba(getComputedStyle(e).backgroundColor); if (c[3] >= 1) return c; } return [255, 255, 255, 1]; };
+  for (const row of t.querySelectorAll<HTMLElement>('tbody tr')) {
+    const cells = [...row.children] as HTMLElement[];
+    if (cells.length !== heads.length) { bad.push(`row has ${cells.length} cells for ${heads.length} heads`); continue; }
+    cells.forEach((td, i) => {
+      const r = td.getBoundingClientRect(), label = getComputedStyle(td, '::before');
+      if (r.width < 1 || r.height < 1) bad.push(`cell "${heads[i]}" is not visible`);
+      if (r.right > tr.right + 0.5 || r.left < tr.left - 0.5) bad.push(`cell "${heads[i]}" is outside the table (${Math.round(r.left)}..${Math.round(r.right)} in ${Math.round(tr.left)}..${Math.round(tr.right)})`);
+      if (narrow) {
+        const want = i === 0 ? 'none' : JSON.stringify(heads[i]);
+        const shown = i === 0 ? (label.display === 'none' || label.content === 'none' ? 'none' : label.content) : label.content;
+        if (shown !== want) bad.push(`cell "${heads[i]}" label ${shown} (want ${want})`);
+        if (i > 0) {
+          const fg = rgba(label.color), bg = ground(td); const [a, b] = [lum(fg), lum(bg)].sort((p, q) => q - p);
+          if ((a + .05) / (b + .05) < 4.5) bad.push(`label "${heads[i]}" contrast ${Math.round((a + .05) / (b + .05) * 100) / 100} < 4.5`);
+        }
+      } else if (label.content !== 'none' && label.content !== 'normal') bad.push(`wide cell "${heads[i]}" shows a label ${label.content}`);
+    });
+    if (narrow && getComputedStyle(row).display !== 'block') bad.push(`row display ${getComputedStyle(row).display} (want block)`);
+    if (narrow && cells.length > 1 && cells[2].querySelector('.tb-tag') === null) bad.push('status tag missing');
+  }
+  if (narrow) { if (head.width > 2 || head.height > 2) bad.push(`head row is visible (${head.width}x${head.height})`); }
+  else {
+    if (head.height < 10) bad.push('head row hidden on a wide screen');
+    if (getComputedStyle(t).display !== 'table') bad.push(`wide table display ${getComputedStyle(t).display}`);
+    const last = t.querySelector<HTMLElement>('tbody tr:first-child td:last-child')!;
+    if (getComputedStyle(last).textAlign !== 'right') bad.push(`wide last column text-align ${getComputedStyle(last).textAlign}`);
+  }
+  return bad;
+};
+const tableFails: string[] = [];
+{
+  const ctx = await browser.newContext({ viewport: { width: 375, height: 812 } }); const page = await ctx.newPage();
+  await page.goto(base + 'index.html?view=table'); await page.waitForSelector('[data-gallery="receipts"] td');
+  await page.addStyleTag({ content: '.tb-table,.tb-table tbody,.tb-table tr,.tb-table td,.tb-table thead{display:revert!important;position:static!important;width:auto!important;height:auto!important;clip-path:none!important}.tb-table th,.tb-table td{white-space:nowrap!important}.tb-table td::before{content:none!important}' });
+  const bad = await page.evaluate(tableCheck);
+  await ctx.close();
+  if (!bad.some(b => b.includes('scrolls sideways') || b.includes('runs out of its box')) || !bad.some(b => b.includes('head row is visible')) || !bad.some(b => b.includes('label')) || !bad.some(b => b.includes('display'))) { console.error('table: SELF-TEST FAILED (does not fire on an unstacked, sideways-scrolling table)', bad); process.exit(2); }
+  if (!ONLY || ONLY.includes('table')) for (const width of [1280, 375]) for (const theme of ['light', 'dark']) {
+    const c2 = await browser.newContext({ viewport: { width, height: 812 } }); const p2 = await c2.newPage();
+    await p2.goto(base + 'index.html?view=table'); await p2.waitForSelector('[data-gallery="receipts"] td');
+    await p2.evaluate((dark) => { if (dark) document.documentElement.setAttribute('data-theme', 'dark'); return document.fonts.ready; }, theme === 'dark');
+    for (const b of await p2.evaluate(tableCheck)) tableFails.push(`${width} ${theme}: ${b}`);
+    await c2.close();
+  }
+}
+for (const f of tableFails) console.error(`TABLE ${f}`);
+console.log(`table: stacked at <= 480px (no sideways scroll, every column and label shown, AA labels), ledger at 1280, light + dark: ${tableFails.length} failures (self-test ok)`);
+
 const inkFails = inkRows.filter(r => Math.abs(r.diff) > .5);
 const byControl = new Map<string, number[]>();
 for (const r of inkRows) { const k = r.control.replace(/\.(primary|quiet|danger|confirm|lg|sm|block|live|busy|needs-you|idle|open|ink|code|tb-ink|hide-phone|only-phone|tb-next|hide-wide)\b/g, '').replace(/\.$/, ''); byControl.set(k, [...(byControl.get(k) ?? []), r.diff]); }
@@ -399,4 +467,4 @@ const uniq = [...new Map(report.map(r => [`${r.page}|${r.width}|${r.theme}|${r.w
 if (!inkOnly) writeFileSync(join(out, 'contrast-report.json'), JSON.stringify({ when: new Date().toISOString(), pagesRendered: pages.length, screenshots: shots, pairsChecked: checked, failures: uniq }, null, 2));
 for (const f of uniq) console.error(`FAIL ${f.page} ${f.width} ${f.theme} [${f.state}] ${f.what} ${f.ratio} < ${f.need}: ${f.where}`);
 if (!inkOnly) console.log(`screens: ${shots} screenshots, ${checked} rendered pairs checked (text + outlines, default/hover/focus/open), ${uniq.length} failures`);
-process.exit(uniq.length || inkFails.length || descFails.length || layoutFails.length ? 1 : 0);
+process.exit(uniq.length || inkFails.length || descFails.length || layoutFails.length || tableFails.length ? 1 : 0);
