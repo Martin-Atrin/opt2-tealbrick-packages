@@ -1,7 +1,7 @@
 /** Surfaces: Card, Panel, Section, Kicker, Swatch, Notice, EmptyState, Table, Progress, CopyBlock, Choices. */
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { $, $$, click, h, key, mount, skip, ui } from "./dom.ts";
+import { $, $$, click, h, key, mount, skip, ui, wait } from "./dom.ts";
 
 const cls = (el: Element) => el.getAttribute("class");
 
@@ -139,6 +139,56 @@ test("Table: table.tb-table with className appended and children kept", { skip }
   assert.equal(t.getAttribute("aria-label"), "Ledger");
   assert.equal($$(t, "th").length, 1);
   assert.equal($(t, "td").textContent, "A");
+  await m.unmount();
+});
+
+test("Table: body cells get data-label from the head (colspan counted); own labels win; later rows are labelled", { skip }, async () => {
+  const { Table } = await ui();
+  const row = (key: string, ...cells: [string, Record<string, unknown>?][]) => h("tr", { key }, ...cells.map(([t, p], i) => h("td", { key: i, ...p }, t)));
+  const m = await mount(
+    h(
+      Table,
+      null,
+      h("thead", null, h("tr", null, h("th", null, "Page"), h("th", { colSpan: 2 }, "Money"), h("th", { "data-label": "When" }, "Date and time"))),
+      h("tbody", null, row("a", ["Weekly"], ["£1"], ["paid"], ["2 Oct"]), row("b", ["Costs"], ["£2", { "data-label": "Mine" }], ["held"], ["3 Oct"])),
+    ),
+  );
+  const labels = () => $$(m.root, "tbody td").map((td) => td.getAttribute("data-label"));
+  assert.deepEqual(labels(), ["Page", "Money", "Money", "When", "Page", "Mine", "Money", "When"]);
+  // a row added after mount (e.g. by a child component's own state) is labelled by the observer
+  const tr = document.createElement("tr");
+  tr.innerHTML = "<td>New</td><td>£3</td>";
+  $(m.root, "tbody").appendChild(tr);
+  await wait(30);
+  assert.deepEqual(
+    $$(tr, "td").map((td) => td.getAttribute("data-label")),
+    ["Page", "Money"],
+  );
+  // a table without a head is left alone
+  const bare = await mount(h(Table, null, h("tbody", null, h("tr", null, h("td", null, "x")))));
+  assert.equal($(bare.root, "td").hasAttribute("data-label"), false);
+  await bare.unmount();
+  await m.unmount();
+});
+
+test("Table: a ref (object or callback) still receives the table element", { skip }, async () => {
+  const { Table } = await ui();
+  const obj: { current: HTMLTableElement | null } = { current: null };
+  const m = await mount(h(Table, { ref: obj }, h("tbody", null, h("tr", null, h("td", null, "x")))));
+  assert.equal(obj.current?.tagName, "TABLE");
+  let got: HTMLTableElement | null = null;
+  await m.rerender(
+    h(
+      Table,
+      {
+        ref: (el: HTMLTableElement | null) => {
+          got = el;
+        },
+      },
+      h("tbody", null, h("tr", null, h("td", null, "x"))),
+    ),
+  );
+  assert.equal((got as HTMLTableElement | null)?.tagName, "TABLE");
   await m.unmount();
 });
 

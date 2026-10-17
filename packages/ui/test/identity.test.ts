@@ -1,5 +1,6 @@
 /** Identity: BrandMark, Lockup, AppIcon, AppMark and the apps.ts helpers. */
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import { test } from "node:test";
 import { $, $$, h, mount, skip, ui } from "./dom.ts";
 
@@ -183,6 +184,29 @@ test("appArt: still, still2x and colour for a known id; trailing slash tolerated
   assert.equal(appArt("connect", "/kit/apps")?.still2x, "/kit/apps/marketplace@2x.webp");
   assert.equal(appArt("connect", "/kit/apps")?.colour, "var(--tb-app-connect)");
   assert.equal(appArt("nope", "/kit/apps"), null);
+});
+
+test("appArt: Observer, Live Artifacts and Creative have art, a name, a group and a header colour (and the file exists)", { skip }, async () => {
+  const { appArt, appColour, appName, APPS } = await ui();
+  const want: [string, string, string, string, string][] = [
+    ["observer", "observer-backfill", "Observer", "memory", "var(--tb-app-observer)"],
+    ["live-artifacts", "live-artifacts", "Live Artifacts", "creation", "var(--tb-app-artifacts)"],
+    ["creative", "open-design", "Creative", "creation", "var(--tb-app-creative)"],
+  ];
+  for (const [id, slug, name, group, colour] of want) {
+    const art = appArt(id, "/kit/apps");
+    assert.deepEqual(art, { still: `/kit/apps/${slug}@1x.webp`, still2x: `/kit/apps/${slug}@2x.webp`, colour });
+    assert.equal(appName(id), name);
+    assert.equal(APPS[id]?.group, group);
+    assert.equal(appColour(id), colour);
+    for (const d of ["1x", "2x"]) assert.ok(existsSync(new URL(`../assets/apps/${slug}@${d}.webp`, import.meta.url)), `${slug}@${d}.webp`);
+  }
+  // every opt2 id the kit knows has both stills in assets/apps/ (a slug without a file shows the "L" tile in the app)
+  for (const a of Object.values(APPS))
+    for (const d of ["1x", "2x"]) assert.ok(existsSync(new URL(`../assets/apps/${a.slug}@${d}.webp`, import.meta.url)), `${a.id}: ${a.slug}@${d}.webp`);
+  assert.equal(appColour("scribe"), undefined); // renamed to observer by the design source
+  assert.equal(appColour("design"), undefined); // renamed to creative
+  assert.equal(appColour("constructor"), undefined);
 });
 
 test("appColour: var(--tb-app-<id>) for kit ids, undefined otherwise", { skip }, async () => {

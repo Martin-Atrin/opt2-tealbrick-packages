@@ -60,12 +60,23 @@ test("dist CSS = design source + package additions, in order", { skip: distSkip 
   assert.match(tokensCss, new RegExp(`@opt2-tealbrick/ui ${pkg.version.replace(/\./g, "\\.")}`));
 });
 
-test("assets: the real drawn mark (not favicon.svg) with provenance, and the 7 opt2 app stills at 1x and 2x", () => {
+test("assets: the real drawn mark (not favicon.svg) with provenance, and the 10 app stills (7 opt2 apps + Observer, Live Artifacts, Creative) at 1x and 2x", () => {
   const brand = readdirSync(join(root, "assets/brand")).sort();
   assert.deepEqual(brand, ["PROVENANCE.md", "logo-32.png", "logo-48.png", "logo-apple-180.png", "logo-mark@3x.png"]);
   assert.equal(readFileSync(join(root, "assets/brand/logo-mark@3x.png")).readUInt32BE(16), 108); // PNG IHDR width
   const apps = readdirSync(join(root, "assets/apps"));
-  for (const slug of ["knowledge", "marketplace", "work-ethic-kanban", "operator-inbox", "rules-approvals", "organization-plane", "evolution-workflow-runtime"])
+  for (const slug of [
+    "knowledge",
+    "marketplace",
+    "work-ethic-kanban",
+    "operator-inbox",
+    "rules-approvals",
+    "organization-plane",
+    "evolution-workflow-runtime",
+    "observer-backfill",
+    "live-artifacts",
+    "open-design",
+  ])
     for (const d of ["1x", "2x"]) assert.ok(apps.includes(`${slug}@${d}.webp`), `${slug}@${d}`);
   assert.ok(pkg.files.includes("assets") && pkg.files.includes("dist") && pkg.files.includes("CHANGELOG.md"));
 });

@@ -1,7 +1,8 @@
 /* App identity: name, group, header colour and art by opt2 product id (C139, C143, C148; DESIGN-SYSTEM §5b).
    Derived from the design lead's assets/apps.ts. The stills are byte copies of production (Tealbrick/Website-martin
    @ c544ef9, public/images/miniapps/<slug>@{1x,2x}.webp, 1200×540 / 2400×1080); the kit ships the 7 that have an opt2
-   app, in assets/apps/. The colours are the generated --tb-app-* tokens (white text >= 4.6:1, check-contrast).
+   app plus Observer, Live Artifacts and Creative (10 in all), in assets/apps/. The colours are the generated --tb-app-*
+   tokens (white text >= 4.6:1, check-contrast).
 
    TODO(spec request 2026-10-13, specs/REQUESTS.md "ui.art"): the art and colour belong in each app's manifest
    (`ui.art: { still, still2x, colour }`) and reach the GUI through the catalog, because the GUI owns no app list
@@ -31,12 +32,15 @@ export const APPS: Readonly<Record<string, AppIdentity>> = {
   rules: { id: "rules", name: "Rules & Approvals", group: "control", slug: "rules-approvals", colour: "var(--tb-app-rules)" },
   fleet: { id: "fleet", name: "Organization Plane", group: "control", slug: "organization-plane", colour: "var(--tb-app-fleet)" },
   connect: { id: "connect", name: "Connect", group: "connections", slug: "marketplace", colour: "var(--tb-app-connect)" },
+  observer: { id: "observer", name: "Observer", group: "memory", slug: "observer-backfill", colour: "var(--tb-app-observer)" },
+  "live-artifacts": { id: "live-artifacts", name: "Live Artifacts", group: "creation", slug: "live-artifacts", colour: "var(--tb-app-artifacts)" },
+  creative: { id: "creative", name: "Creative", group: "creation", slug: "open-design", colour: "var(--tb-app-creative)" },
 };
 
-/** Header colour per app id: every --tb-app-* token (13, incl. the six stills that have no opt2 app yet). */
+/** Header colour per app id: every --tb-app-* token (13, incl. the three stills that have no app yet: mesh, bridge, setup). */
 export const APP_COLOUR_IDS = [
   "knowledge",
-  "scribe",
+  "observer",
   "inbox",
   "kanban",
   "evolution",
@@ -46,13 +50,15 @@ export const APP_COLOUR_IDS = [
   "connect",
   "bridge",
   "setup",
-  "design",
+  "creative",
   "artifacts",
 ] as const;
 
-/** `var(--tb-app-<id>)` when the kit has a colour for the id, else undefined (use a neutral header). */
+/** `var(--tb-app-<id>)` when the kit has a colour for the id (a colour id or an app id from APPS, e.g. "live-artifacts"),
+    else undefined (use a neutral header). */
 export function appColour(id: string): string | undefined {
-  return (APP_COLOUR_IDS as readonly string[]).includes(id) ? `var(--tb-app-${id})` : undefined;
+  if ((APP_COLOUR_IDS as readonly string[]).includes(id)) return `var(--tb-app-${id})`;
+  return Object.hasOwn(APPS, id) ? APPS[id]?.colour : undefined;
 }
 
 /**

@@ -1,6 +1,6 @@
 /* Kit gallery: every @opt2-tealbrick/ui export in its states, rendered from the BUILT package (dist), so the rendered
    checks (scripts/check-rendered.ts: contrast in every state, scrollbars, ink centring) test what consumers install.
-   Views: ?view=components (default) | shell-app[&app=<id>] | shell | dialog | stepflow[&step=N] | toast | reading */
+   Views: ?view=components (default) | shell-app[&app=<id>] | shell | dialog | stepflow[&step=N] | toast | reading | table */
 import { type ReactNode, StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -284,7 +284,7 @@ function Components() {
           <Lockup sub="Portal" href="#x" />
         </div>
         <div className="tb-row">
-          {["knowledge", "kanban", "inbox", "evolution", "rules", "fleet", "connect"].map((id) => (
+          {["knowledge", "kanban", "inbox", "evolution", "rules", "fleet", "connect", "observer", "live-artifacts", "creative"].map((id) => (
             <span key={id} className="app-chip" style={{ background: appColour(id) }}>
               <AppIcon art={appArt(id, ART_BASE)} size={24} />
               <span>{id}</span>
@@ -611,7 +611,52 @@ function ReadingView() {
   );
 }
 
+function TableView() {
+  // 0.3.0 specimen: a Receipts-style ledger (title + five columns, Status among them). At <= 480px every row stacks;
+  // at 1280px it is the ledger table. A phone-width box must never scroll sideways and must show every column.
+  const rows: [string, string, "live" | "needs-you" | "idle", string, string, string][] = [
+    ["Weekly report page", "Scout", "live", "Paid", "£0.42", "2 Oct 2026, 09:14"],
+    ["Cost breakdown by workspace and month", "Writer on the staging cluster", "needs-you", "Held", "£12.80", "28 Sep 2026, 16:02"],
+    ["Release notes", "Reviewer", "idle", "Refunded", "£0.00", "27 Sep 2026, 08:30"],
+  ];
+  return (
+    <>
+      <PortalHeader />
+      <main className="page tb-stack">
+        <Section title="Receipts" first>
+          <p className="tb-soft">Every charge an agent made on your behalf.</p>
+          <Table data-gallery="receipts">
+            <thead>
+              <tr>
+                <th>Page</th>
+                <th>Agent</th>
+                <th>Status</th>
+                <th>Cost</th>
+                <th>When</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(([page, agent, status, label, cost, when]) => (
+                <tr key={page}>
+                  <td className="strong">{page}</td>
+                  <td>{agent}</td>
+                  <td>
+                    <Tag status={status}>{label}</Tag>
+                  </td>
+                  <td className="num">{cost}</td>
+                  <td className="num">{when}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Section>
+      </main>
+    </>
+  );
+}
+
 function App() {
+  if (view === "table") return <TableView />;
   if (view === "reading") return <ReadingView />;
   if (view === "stepflow") return <StepFlowView />;
   if (view === "dialog") return <DialogView />;

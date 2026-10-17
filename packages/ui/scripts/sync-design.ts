@@ -37,8 +37,20 @@ const FILES: [string, string, How][] = [
   ["assets/brand/logo-48.png", "assets/brand/logo-48.png", "copy"],
   ["assets/brand/logo-apple-180.png", "assets/brand/logo-apple-180.png", "copy"],
 ];
-/** the opt2 apps that have a product id (assets/apps.ts byOpt2Id); the other six stills have no opt2 app yet */
-const STILLS = ["knowledge", "marketplace", "work-ethic-kanban", "operator-inbox", "rules-approvals", "organization-plane", "evolution-workflow-runtime"];
+/** the apps the kit has art for: the opt2 apps with a product id (assets/apps.ts byOpt2Id) plus Observer, Live Artifacts and Creative;
+    the other three stills (Mesh Trust Topology, Local Runtime Bridge, Remote Setup) have no opt2 app yet */
+const STILLS = [
+  "knowledge",
+  "marketplace",
+  "work-ethic-kanban",
+  "operator-inbox",
+  "rules-approvals",
+  "organization-plane",
+  "evolution-workflow-runtime",
+  "observer-backfill",
+  "live-artifacts",
+  "open-design",
+];
 for (const slug of STILLS) for (const d of ["1x", "2x"]) FILES.push([`assets/apps/${slug}@${d}.webp`, `assets/apps/${slug}@${d}.webp`, "copy"]);
 
 /** Removes the "@deprecated 0.1.x aliases" block (comment line up to the end of its rule block). */

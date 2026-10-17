@@ -1,12 +1,12 @@
 {
   "source": "coordination/design (opt2 design lead)",
-  "synced": "2026-10-14T08:40:25.755Z",
+  "synced": "2026-10-17T13:46:48.200Z",
   "files": {
     "tokens.css": {
-      "sha256": "7d1a7e48b30491b48f7c4fe7b922e1fb3f7fa21e52c6df343e064aff31a05e31",
+      "sha256": "39556cfb0dd84c945d135eb7716c27f26cda720d56cfc9de877c293c45492d81",
       "to": "src/tokens.css",
       "how": "strip-aliases",
-      "pkgSha256": "4eb09901a0309477a04649bf36e7287708b5a12ce78cc6bf776910c00211e98b"
+      "pkgSha256": "75d1dd55a519acf9e029a621d35cc622c9bda29a653e7e4f39ebea2badff8577"
     },
     "components.css": {
       "sha256": "66f0b4fc2f337016cc209999352612698a1671cdfd00a559250181f5ccc86201",
@@ -21,7 +21,7 @@
       "pkgSha256": "cd4c74caadcc4e0107f990a3199d4c895ea3de7ab654f76229a59f1473649eaf"
     },
     "tokens.ts": {
-      "sha256": "e0d7b8c3d850c169d2d8da386d62ed21d15bdff5ec193c1570898dbe7e7f1825",
+      "sha256": "4c32b73f44a2a18cc24f7b6c100bd4abf4a39382dca2bdeb3238c0cb947d3c22",
       "to": "",
       "how": "derived"
     },
@@ -41,7 +41,7 @@
       "how": "derived"
     },
     "tools/screens.ts": {
-      "sha256": "74811b950549b4be5a024494e722c179d3ce97ba57eb30b7df029dfecca35e5b",
+      "sha256": "21ac7b2c5d2d4b61e47598177fc24fcb43904a879522cabe0886cad194cb96b3",
       "to": "scripts/check-rendered.ts",
       "how": "derived"
     },
@@ -52,7 +52,7 @@
       "pkgSha256": "02225badd9fb433b07c7b283125af05393f9fc2be0bfb46682c6879e60055fcf"
     },
     "assets/apps.ts": {
-      "sha256": "dbcc485466708cc275196603f0d29b1f19b06bc1dbb3d8c29e00dc1c89b111e7",
+      "sha256": "c1b1e532ba7350216789a82c0ff59d33fc3e386357b5f890bd92d5e854b5f21c",
       "to": "src/apps.ts",
       "how": "derived"
     },
@@ -169,6 +169,42 @@
       "to": "assets/apps/evolution-workflow-runtime@2x.webp",
       "how": "copy",
       "pkgSha256": "c3f6d6e531886d953909ba723f95705b96f838a900724ecfe2cc2a2ae01b7acb"
+    },
+    "assets/apps/observer-backfill@1x.webp": {
+      "sha256": "943a0903a56059dacd7d3e09d16f2fdf903c526839bffeec34212e16cf4e4627",
+      "to": "assets/apps/observer-backfill@1x.webp",
+      "how": "copy",
+      "pkgSha256": "943a0903a56059dacd7d3e09d16f2fdf903c526839bffeec34212e16cf4e4627"
+    },
+    "assets/apps/observer-backfill@2x.webp": {
+      "sha256": "94f734f8e17b25c4fa78f652007074ac521386478a73813fb55140ba9bd61559",
+      "to": "assets/apps/observer-backfill@2x.webp",
+      "how": "copy",
+      "pkgSha256": "94f734f8e17b25c4fa78f652007074ac521386478a73813fb55140ba9bd61559"
+    },
+    "assets/apps/live-artifacts@1x.webp": {
+      "sha256": "f44f9f64dbf25fbc250d3f9f79f79e12be97104c23419e954386acb54c5fb92c",
+      "to": "assets/apps/live-artifacts@1x.webp",
+      "how": "copy",
+      "pkgSha256": "f44f9f64dbf25fbc250d3f9f79f79e12be97104c23419e954386acb54c5fb92c"
+    },
+    "assets/apps/live-artifacts@2x.webp": {
+      "sha256": "b0ae0ead0359f4b310a6307fed58718ee2767979f78f1c1ca897bdca180cb84b",
+      "to": "assets/apps/live-artifacts@2x.webp",
+      "how": "copy",
+      "pkgSha256": "b0ae0ead0359f4b310a6307fed58718ee2767979f78f1c1ca897bdca180cb84b"
+    },
+    "assets/apps/open-design@1x.webp": {
+      "sha256": "a99ed8089848669e79fdc117507f24b2b20541cb68d1b5f52fe5b80b613cbc32",
+      "to": "assets/apps/open-design@1x.webp",
+      "how": "copy",
+      "pkgSha256": "a99ed8089848669e79fdc117507f24b2b20541cb68d1b5f52fe5b80b613cbc32"
+    },
+    "assets/apps/open-design@2x.webp": {
+      "sha256": "090d7be4a804d1c3d517054310a4ea2aff721f12dbd7afe6656b968139898677",
+      "to": "assets/apps/open-design@2x.webp",
+      "how": "copy",
+      "pkgSha256": "090d7be4a804d1c3d517054310a4ea2aff721f12dbd7afe6656b968139898677"
     }
   }
 }
